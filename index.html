@@ -52,8 +52,6 @@
         const Activity = (p) => <Icon name="Activity" {...p} />;
         const Settings = (p) => <Icon name="Settings" {...p} />;
         const Clock = (p) => <Icon name="Clock" {...p} />;
-        const CheckCircle2 = (p) => <Icon name="CheckCircle2" {...p} />;
-        const Circle = (p) => <Icon name="Circle" {...p} />;
         const CheckSquare = (p) => <Icon name="CheckSquare" {...p} />;
         const Square = (p) => <Icon name="Square" {...p} />;
         const ChevronRight = (p) => <Icon name="ChevronRight" {...p} />;
@@ -68,17 +66,18 @@
         const X = (p) => <Icon name="X" {...p} />;
         const Dumbbell = (p) => <Icon name="Dumbbell" {...p} />;
         const MessageSquare = (p) => <Icon name="MessageSquare" {...p} />;
+        const Pill = (p) => <Icon name="Pill" {...p} />;
 
         const SUPPLEMENT_INFO = {
-          "Creatine": { title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
-          "Beta-Ala": { title: "Beta-Alanine", dose: "3.2g Daily", why: "Buffers intracellular acid. Reduces 'burn' in 10k/Intervals. Causes harmless tingling." },
-          "D3+K2": { title: "Vitamin D3+K2", dose: "5000IU", why: "Bone health & immune support. K2 directs calcium to bones, not arteries." },
-          "Caffeine": { title: "Caffeine", dose: "200mg (T-45m)", why: "Lowers RPE. Mobilizes fat. Essential for race starts." },
-          "Bicarb": { title: "Sodium Bicarbonate", dose: "20g (Protocol)", why: "Extracellular buffering. Sucks acid out of muscles. swallow whole." },
-          "Nitrates": { title: "Beet Shot", dose: "400mg", why: "Improves O2 efficiency at altitude." },
-          "Sodium": { title: "Sodium Load", dose: "1500mg", why: "Expands plasma volume for altitude and cooling." },
-          "Gel": { title: "Energy Gel", dose: "45g Carb", why: "Immediate glycogen availability." },
-          "Carbs": { title: "Liquid Carbs", dose: "100g/hr", why: "Sustain high output without digestive distress." }
+          "Creatine": { type: "Daily", title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
+          "Beta-Ala": { type: "Daily", title: "Beta-Alanine", dose: "3.2g Daily", why: "Buffers intracellular acid. Reduces 'burn' in 10k/Intervals. Causes harmless tingling." },
+          "D3+K2": { type: "Daily", title: "Vitamin D3+K2", dose: "5000IU", why: "Bone health & immune support. K2 directs calcium to bones, not arteries." },
+          "Caffeine": { type: "Acute", title: "Caffeine", dose: "200mg (T-45m)", why: "Lowers RPE. Mobilizes fat. Essential for race starts." },
+          "Bicarb": { type: "Acute", title: "Sodium Bicarbonate", dose: "20g (Protocol)", why: "Extracellular buffering. Sucks acid out of muscles. swallow whole." },
+          "Nitrates": { type: "Acute", title: "Beet Shot", dose: "400mg", why: "Improves O2 efficiency at altitude." },
+          "Sodium": { type: "Acute", title: "Sodium Load", dose: "1500mg", why: "Expands plasma volume for altitude and cooling." },
+          "Gel": { type: "Acute", title: "Energy Gel", dose: "45g Carb", why: "Immediate glycogen availability." },
+          "Carbs": { type: "Acute", title: "Liquid Carbs", dose: "100g/hr", why: "Sustain high output without digestive distress." }
         };
 
         const RECOVERY_ROUTINES = {
@@ -102,9 +101,8 @@
           "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze" } }
         };
 
-        // --- FULL 9-WEEK SCHEDULE (Revised Fri/Sat Pattern) ---
-        // Daily Stack: Creatine, Beta-Ala, D3+K2
-        // Acute Supps (In workout): Caffeine, Sodium, Gel, Carbs
+        // --- FULL 9-WEEK SCHEDULE ---
+        // Stack separated: Daily in 'stack', Acute in 'supps'
         const WEEKS = {
           1: { title: "Phase 1: Build", focus: "Stability", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "VO2 Intervals", dur: "50m", tss: 70, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["Warmup 10m", "6x800m @ 6:25", "Cooldown 10m"], supps: [] }] },
@@ -181,7 +179,7 @@
           9: { title: "Phase 2: Race Week", focus: "Priming", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "30m", tss: 15, fl: "Low", rec: "A", goal: "Rest", ex: ["30m Z1 Spin"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "40m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Strides", dur: "30m", tss: 35, fl: "Moderate", rec: "D", goal: "Activation", ex: ["30m w/ 4x30s"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 35, fl: "High", rec: "C", goal: "Race Priming", ex: ["2x3m @ 245W"], supps: ["Caffeine"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 35, fl: "High", rec: "C", goal: "Race Priming", ex: ["2x3m @ 245W"], supps: ["Caffeine"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "30m", tss: 20, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Jog", dur: "20m", tss: 15, fl: "Moderate", rec: "E", goal: "Shakeout", ex: ["20m Easy"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Load Spin", dur: "20m", tss: 10, fl: "High", rec: "B", goal: "Spin", ex: ["20m Spin", "Load"], supps: ["Sodium"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
@@ -272,11 +270,12 @@
                 <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
                   <div className="hidden lg:block mb-8">
                     <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
-                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V1.8</div>
+                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V1.9</div>
                   </div>
                   <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                   <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
                   <NavButton id="fuel" icon={Flame} label="FUEL" active={activeTab === 'fuel'} onClick={() => setActiveTab('fuel')} />
+                  <NavButton id="supplements" icon={Pill} label="STACK" active={activeTab === 'supplements'} onClick={() => setActiveTab('supplements')} />
                   <NavButton id="recovery" icon={Activity} label="RECOVERY" active={activeTab === 'recovery'} onClick={() => setActiveTab('recovery')} />
                   <NavButton id="gear" icon={Settings} label="GEAR" active={activeTab === 'gear'} onClick={() => setActiveTab('gear')} />
                 </div>
@@ -297,6 +296,7 @@
                 )}
                 {activeTab === 'calendar' && <CalendarView goToDay={goToDay} />}
                 {activeTab === 'fuel' && <FuelView weekData={weekData} dayData={dayData} />}
+                {activeTab === 'supplements' && <SupplementsView />}
                 {activeTab === 'recovery' && <RecoveryView targetRecovery={targetRecovery} />}
                 {activeTab === 'gear' && <GearView temp={temp} setTemp={setTemp} cond={cond} setCond={setCond} />}
               </main>
@@ -413,7 +413,7 @@
                            <div key={i} className="flex items-center justify-between bg-slate-900/50 p-2 rounded-sm border border-slate-700/50 hover:bg-slate-900 transition-colors cursor-pointer group" onClick={() => openSuppModal(item)}>
                               <div className="flex items-center gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); toggleCheck(uid); }} className={checkedItems[uid] ? 'text-green-500' : 'text-slate-600 hover:text-slate-400'}>
-                                   {checkedItems[uid] ? <CheckCircle2 size={14}/> : <Circle size={14}/>}
+                                   {checkedItems[uid] ? <CheckSquare size={16}/> : <Square size={16}/>}
                                 </button>
                                 <span className={`text-xs font-bold ${checkedItems[uid] ? 'text-slate-500 line-through' : 'text-slate-300 group-hover:text-white'}`}>
                                   {item}
@@ -470,8 +470,9 @@
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="bg-black/20 px-2 py-0.5 rounded text-[10px] font-bold text-white/90">{data.tss} TSS</span>
-                    <button onClick={() => toggleCheck(uid)} className="text-white/80 hover:text-white transition-colors">
-                        {isCompleted ? <CheckSquare size={20} /> : <Square size={20} />}
+                    <button onClick={() => toggleCheck(uid)} className="flex items-center gap-1 text-white/90 hover:text-white transition-colors text-[10px] font-bold uppercase bg-black/10 px-2 py-1 rounded hover:bg-black/20">
+                        {isCompleted ? <CheckSquare size={14} /> : <Square size={14} />}
+                        <span>{isCompleted ? "Completed" : "Mark Complete"}</span>
                     </button>
                 </div>
               </div>
@@ -504,7 +505,7 @@
                                         onClick={() => toggleCheck(suppUid)}
                                         className={`text-xs px-2 py-1 rounded border flex items-center gap-2 transition-all ${checkedItems[suppUid] ? 'bg-green-900/30 border-green-500/50 text-green-400' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700'}`}
                                     >
-                                        {checkedItems[suppUid] ? <CheckCircle2 size={12}/> : <Circle size={12}/>}
+                                        {checkedItems[suppUid] ? <CheckSquare size={12}/> : <Square size={12}/>}
                                         {supp}
                                     </button>
                                 );
@@ -536,6 +537,46 @@
               </div>
             </div>
           );
+        }
+
+        function SupplementsView() {
+            return (
+                <div className="animate-in fade-in space-y-6">
+                    <div className="bg-slate-800 p-6 rounded-md border border-slate-700">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Pill className="text-blue-400 w-6 h-6" />
+                            <h2 className="text-2xl font-bold text-white">Supplement Protocol</h2>
+                        </div>
+                        
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm text-slate-400">
+                                <thead className="text-xs uppercase bg-slate-900 text-slate-300">
+                                    <tr>
+                                        <th className="px-4 py-3 rounded-tl-md">Supplement</th>
+                                        <th className="px-4 py-3">Type</th>
+                                        <th className="px-4 py-3">Dose & Timing</th>
+                                        <th className="px-4 py-3 rounded-tr-md">Objective</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-700">
+                                    {Object.entries(SUPPLEMENT_INFO).map(([key, info]) => (
+                                        <tr key={key} className="hover:bg-slate-700/30 transition-colors">
+                                            <td className="px-4 py-3 font-medium text-white">{info.title}</td>
+                                            <td className="px-4 py-3">
+                                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${info.type === 'Daily' ? 'bg-blue-900/30 text-blue-400' : 'bg-orange-900/30 text-orange-400'}`}>
+                                                    {info.type}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-300">{info.dose}</td>
+                                            <td className="px-4 py-3">{info.why}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
         }
 
         function FuelView({ weekData, dayData }) {
