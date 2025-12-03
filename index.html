@@ -1,535 +1,593 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar as CalendarIcon, 
-  LayoutDashboard,
-  Flame, 
-  Activity, 
-  Settings, 
-  Clock, 
-  CheckCircle2, 
-  Circle, 
-  ChevronRight,
-  Coffee,
-  Utensils,
-  Zap,
-  Droplets,
-  Wind,
-  Thermometer,
-  CloudRain,
-  Info,
-  X,
-  Dumbbell
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMW 2026 Training Hub</title>
+    
+    <!-- 1. Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Load React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. Load Babel (to interpret JSX in browser) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 4. Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-// --- DATA CONSTANTS ---
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-const SUPPLEMENT_INFO = {
-  "Creatine": { title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
-  "Beta-Ala": { title: "Beta-Alanine", dose: "3.2g Daily", why: "Buffers intracellular acid. Reduces 'burn' in 10k/Intervals. Causes harmless tingling." },
-  "D3+K2": { title: "Vitamin D3+K2", dose: "5000IU", why: "Bone health & immune support. K2 directs calcium to bones, not arteries." },
-  "Caffeine": { title: "Caffeine", dose: "200mg (T-45m)", why: "Lowers RPE. Mobilizes fat. Essential for race starts." },
-  "Bicarb": { title: "Sodium Bicarbonate", dose: "20g (Protocol)", why: "Extracellular buffering. Sucks acid out of muscles. swallow whole." },
-  "Nitrates": { title: "Beet Shot", dose: "400mg", why: "Improves O2 efficiency at altitude." },
-  "Sodium": { title: "Sodium Load", dose: "1500mg", why: "Expands plasma volume for altitude and cooling." }
-};
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-const RECOVERY_ROUTINES = {
-  'A': { id: 'A', title: "Routine A: The Flush", sub: "Parasympathetic Reset", time: "10m", steps: ["Legs Up Wall (3m)", "Box Breathing (2m)", "Light Calf Roll (2m)", "Child's Pose (2m)", "Hydrate (16oz)"] },
-  'B': { id: 'B', title: "Routine B: The Unlock", sub: "Hip & Spine Mobility", time: "10m", steps: ["T-Spine Ext (2m)", "Couch Stretch (2m/side)", "90/90 Hip Switch (2m)", "Cat/Cow (2m)", "Deep Squat Hold (2m)"] },
-  'C': { id: 'C', title: "Routine C: The Release", sub: "Deep Tissue", time: "10m", steps: ["Gun: Glute Med (2m)", "Gun: Quads (2m)", "Roll IT Band (2m)", "Pigeon Pose (2m)", "Hamstring Floss (2m)"] },
-  'D': { id: 'D', title: "Routine D: The Foundation", sub: "Core Strength", time: "20m", steps: ["Pallof Press (3x10)", "DB Goblet Squat (3x12)", "Dead Bug (3x10)", "Band Clamshells (3x15)", "Plank Saw (3x45s)"] },
-  'E': { id: 'E', title: "Routine E: The Stabilizer", sub: "Ankle/Shoulder", time: "15m", steps: ["Mobo Rock (3x1m)", "DB Scaption (3x10)", "Single Leg RDL (3x10)", "Band Pull-Apart (3x15)", "Mobo Lateral (3x1m)"] }
-};
+        // --- ICON HELPER COMPONENT ---
+        // This allows us to use Lucide icons in React without a build step
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const [svgHtml, setSvgHtml] = useState('');
+            
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons[name]) {
+                    const icon = window.lucide.icons[name];
+                    const svg = icon.toSvg({
+                        class: className,
+                        width: size,
+                        height: size,
+                        "stroke-width": 2
+                    });
+                    setSvgHtml(svg);
+                }
+            }, [name, size, className]);
 
-const FLUX_DATA = {
-  'High': { color: 'green', desc: "PERFORMANCE. High carbs. No deficit.", b: "Oats + Banana + Syrup", l: "Rice Bowl + Chicken", d: "Pasta + Lean Beef", pre: "45g Carbs (Gel)", intra: "100g Carb/hr" },
-  'Moderate': { color: 'yellow', desc: "MAINTENANCE. Fuel the work.", b: "Yogurt + Berries", l: "Quinoa + Chicken", d: "Steak + Potato", pre: "Banana", intra: "50g Carb/hr" },
-  'Low': { color: 'red', desc: "FAT LOSS. High protein, low starch.", b: "Veggie Omelet", l: "Salad + Tuna", d: "White Fish + Asparagus", pre: "Black Coffee", intra: "Water Only" }
-};
+            return <span dangerouslySetInnerHTML={{ __html: svgHtml }} style={{ display: 'inline-flex' }} />;
+        };
 
-const GEAR_MATRIX = {
-  "10-20F": { "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot" }, "Wet": { u: "ADD: Hardshell Jacket", l: "ADD: Rain Trousers", e: "Neoprene Gloves / Vapor Socks" } },
-  "20-30F": { "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock" }, "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves / Tape Vents" } },
-  "30-40F": { "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers" }, "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie" } },
-  "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze" } }
-};
+        // Icon Components mapping to match previous JSX usage
+        const CalendarIcon = (p) => <Icon name="Calendar" {...p} />;
+        const LayoutDashboard = (p) => <Icon name="LayoutDashboard" {...p} />;
+        const Flame = (p) => <Icon name="Flame" {...p} />;
+        const Activity = (p) => <Icon name="Activity" {...p} />;
+        const Settings = (p) => <Icon name="Settings" {...p} />;
+        const Clock = (p) => <Icon name="Clock" {...p} />;
+        const CheckCircle2 = (p) => <Icon name="CheckCircle2" {...p} />;
+        const Circle = (p) => <Icon name="Circle" {...p} />;
+        const ChevronRight = (p) => <Icon name="ChevronRight" {...p} />;
+        const Coffee = (p) => <Icon name="Coffee" {...p} />;
+        const Utensils = (p) => <Icon name="Utensils" {...p} />;
+        const Zap = (p) => <Icon name="Zap" {...p} />;
+        const Droplets = (p) => <Icon name="Droplets" {...p} />;
+        const Wind = (p) => <Icon name="Wind" {...p} />;
+        const Thermometer = (p) => <Icon name="Thermometer" {...p} />;
+        const CloudRain = (p) => <Icon name="CloudRain" {...p} />;
+        const Info = (p) => <Icon name="Info" {...p} />;
+        const X = (p) => <Icon name="X" {...p} />;
+        const Dumbbell = (p) => <Icon name="Dumbbell" {...p} />;
 
-const WEEKS = {
-  1: { title: "Phase 1: Build", focus: "Stability", days: [
-      { t: "Run", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Run", title: "VO2 Intervals", dur: "50m", tss: 70, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["Warmup 10m", "6x800m @ 6:25", "Cooldown 10m"] }
-      ]},
-      { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Swim", title: "Threshold Swim", dur: "1h", tss: 60, fl: "Moderate", rec: "D", goal: "Aerobic Power", ex: ["Continuous Laps", "Sustain Threshold"] },
-        { t: "Run", title: "Easy Run", dur: "30m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2 (8:00+)"] }
-      ]},
-      { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine"], workouts: [
-        { t: "Run", title: "Tempo Run (AM)", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Glycogen Deplete", ex: ["20m @ 7:10/mi pace"] },
-        { t: "Bike", title: "VO2 Max (PM)", dur: "1h", tss: 80, fl: "High", rec: "C", goal: "Raise Ceiling", ex: ["5x3m @ 315W"] }
-      ]},
-      { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Bike", title: "VO2 Support", dur: "1h", tss: 80, fl: "Moderate", rec: "E", goal: "Lactate Clear", ex: ["6x3m @ 315W"] },
-        { t: "Swim", title: "Recovery Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy Laps"] }
-      ]},
-      { t: "Swim", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Swim", title: "Volume Swim", dur: "60m", tss: 45, fl: "Low", rec: "B", goal: "Volume", ex: ["Steady State"] }
-      ]},
-      { t: "Run", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Run", title: "Long Trail Run", dur: "1h 10m", tss: 70, fl: "High", rec: "C", goal: "Ankle Stability", ex: ["Trails HR < 145"] }
-      ]},
-      { t: "Bike", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
-        { t: "Bike", title: "Gravel Skills", dur: "2.5h", tss: 130, fl: "Moderate", rec: "A", goal: "Handling", ex: ["Find Mud", "190W Avg"] }
-      ]}
-  ]},
-  // ... (Cloning week 1 for demo completeness, real app would have full data)
-};
-for(let i=2; i<=9; i++) WEEKS[i] = WEEKS[1]; 
+        // --- DATA CONSTANTS ---
 
-export default function TrainingApp() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [week, setWeek] = useState(1);
-  const [day, setDay] = useState(0); 
-  const [checkedItems, setCheckedItems] = useState({});
-  const [targetRecovery, setTargetRecovery] = useState(null);
-  const [activeSupplement, setActiveSupplement] = useState(null); 
-  
-  // Gear state
-  const [temp, setTemp] = useState("30-40F");
-  const [cond, setCond] = useState("Dry");
+        const SUPPLEMENT_INFO = {
+          "Creatine": { title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
+          "Beta-Ala": { title: "Beta-Alanine", dose: "3.2g Daily", why: "Buffers intracellular acid. Reduces 'burn' in 10k/Intervals. Causes harmless tingling." },
+          "D3+K2": { title: "Vitamin D3+K2", dose: "5000IU", why: "Bone health & immune support. K2 directs calcium to bones, not arteries." },
+          "Caffeine": { title: "Caffeine", dose: "200mg (T-45m)", why: "Lowers RPE. Mobilizes fat. Essential for race starts." },
+          "Bicarb": { title: "Sodium Bicarbonate", dose: "20g (Protocol)", why: "Extracellular buffering. Sucks acid out of muscles. swallow whole." },
+          "Nitrates": { title: "Beet Shot", dose: "400mg", why: "Improves O2 efficiency at altitude." },
+          "Sodium": { title: "Sodium Load", dose: "1500mg", why: "Expands plasma volume for altitude and cooling." }
+        };
 
-  const toggleCheck = (id) => setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+        const RECOVERY_ROUTINES = {
+          'A': { id: 'A', title: "Routine A: The Flush", sub: "Parasympathetic Reset", time: "10m", steps: ["Legs Up Wall (3m)", "Box Breathing (2m)", "Light Calf Roll (2m)", "Child's Pose (2m)", "Hydrate (16oz)"] },
+          'B': { id: 'B', title: "Routine B: The Unlock", sub: "Hip & Spine Mobility", time: "10m", steps: ["T-Spine Ext (2m)", "Couch Stretch (2m/side)", "90/90 Hip Switch (2m)", "Cat/Cow (2m)", "Deep Squat Hold (2m)"] },
+          'C': { id: 'C', title: "Routine C: The Release", sub: "Deep Tissue", time: "10m", steps: ["Gun: Glute Med (2m)", "Gun: Quads (2m)", "Roll IT Band (2m)", "Pigeon Pose (2m)", "Hamstring Floss (2m)"] },
+          'D': { id: 'D', title: "Routine D: The Foundation", sub: "Core Strength", time: "20m", steps: ["Pallof Press (3x10)", "DB Goblet Squat (3x12)", "Dead Bug (3x10)", "Band Clamshells (3x15)", "Plank Saw (3x45s)"] },
+          'E': { id: 'E', title: "Routine E: The Stabilizer", sub: "Ankle/Shoulder", time: "15m", steps: ["Mobo Rock (3x1m)", "DB Scaption (3x10)", "Single Leg RDL (3x10)", "Band Pull-Apart (3x15)", "Mobo Lateral (3x1m)"] }
+        };
 
-  const jumpToRecovery = (recId) => {
-    setTargetRecovery(recId);
-    setActiveTab('recovery');
-  };
+        const FLUX_DATA = {
+          'High': { color: 'green', desc: "PERFORMANCE. High carbs. No deficit.", b: "Oats + Banana + Syrup", l: "Rice Bowl + Chicken", d: "Pasta + Lean Beef", pre: "45g Carbs (Gel)", intra: "100g Carb/hr" },
+          'Moderate': { color: 'yellow', desc: "MAINTENANCE. Fuel the work.", b: "Yogurt + Berries", l: "Quinoa + Chicken", d: "Steak + Potato", pre: "Banana", intra: "50g Carb/hr" },
+          'Low': { color: 'red', desc: "FAT LOSS. High protein, low starch.", b: "Veggie Omelet", l: "Salad + Tuna", d: "White Fish + Asparagus", pre: "Black Coffee", intra: "Water Only" }
+        };
 
-  const jumpToFuel = () => setActiveTab('fuel');
+        const GEAR_MATRIX = {
+          "10-20F": { "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot" }, "Wet": { u: "ADD: Hardshell Jacket", l: "ADD: Rain Trousers", e: "Neoprene Gloves / Vapor Socks" } },
+          "20-30F": { "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock" }, "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves / Tape Vents" } },
+          "30-40F": { "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers" }, "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie" } },
+          "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze" } }
+        };
 
-  const goToDay = (w, d) => {
-    setWeek(w);
-    setDay(d);
-    setActiveTab('dashboard');
-  };
+        const WEEKS = {
+          1: { title: "Phase 1: Build", focus: "Stability", days: [
+              { t: "Run", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Run", title: "VO2 Intervals", dur: "50m", tss: 70, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["Warmup 10m", "6x800m @ 6:25", "Cooldown 10m"] }
+              ]},
+              { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Swim", title: "Threshold Swim", dur: "1h", tss: 60, fl: "Moderate", rec: "D", goal: "Aerobic Power", ex: ["Continuous Laps", "Sustain Threshold"] },
+                { t: "Run", title: "Easy Run", dur: "30m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2 (8:00+)"] }
+              ]},
+              { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine"], workouts: [
+                { t: "Run", title: "Tempo Run (AM)", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Glycogen Deplete", ex: ["20m @ 7:10/mi pace"] },
+                { t: "Bike", title: "VO2 Max (PM)", dur: "1h", tss: 80, fl: "High", rec: "C", goal: "Raise Ceiling", ex: ["5x3m @ 315W"] }
+              ]},
+              { t: "Double", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Bike", title: "VO2 Support", dur: "1h", tss: 80, fl: "Moderate", rec: "E", goal: "Lactate Clear", ex: ["6x3m @ 315W"] },
+                { t: "Swim", title: "Recovery Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy Laps"] }
+              ]},
+              { t: "Swim", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Swim", title: "Volume Swim", dur: "60m", tss: 45, fl: "Low", rec: "B", goal: "Volume", ex: ["Steady State"] }
+              ]},
+              { t: "Run", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Run", title: "Long Trail Run", dur: "1h 10m", tss: 70, fl: "High", rec: "C", goal: "Ankle Stability", ex: ["Trails HR < 145"] }
+              ]},
+              { t: "Bike", stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [
+                { t: "Bike", title: "Gravel Skills", dur: "2.5h", tss: 130, fl: "Moderate", rec: "A", goal: "Handling", ex: ["Find Mud", "190W Avg"] }
+              ]}
+          ]},
+          // For demo, replicate Week 1 structure for Weeks 2-9 so calendar is full. 
+          // In a real deployment, you would paste the specific data for each week here.
+        };
+        for(let i=2; i<=9; i++) WEEKS[i] = WEEKS[1]; 
 
-  return (
-    <div className="flex h-screen flex-col lg:flex-row bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30 overflow-hidden relative">
-      
-      {/* SUPPLEMENT MODAL */}
-      {activeSupplement && (
-        <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setActiveSupplement(null)}>
-          <div className="bg-slate-900 border border-slate-700 p-6 rounded-md max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-bold text-white">{SUPPLEMENT_INFO[activeSupplement]?.title || activeSupplement}</h3>
-              <button onClick={() => setActiveSupplement(null)} className="text-slate-400 hover:text-white"><X size={20}/></button>
-            </div>
-            {SUPPLEMENT_INFO[activeSupplement] ? (
-              <div className="space-y-4">
-                 <div className="bg-slate-800 p-3 rounded-md">
-                   <div className="text-[10px] uppercase font-bold text-slate-500">Dose & Timing</div>
-                   <div className="text-blue-400 font-bold">{SUPPLEMENT_INFO[activeSupplement].dose}</div>
-                 </div>
-                 <div>
-                   <div className="text-[10px] uppercase font-bold text-slate-500 mb-1">Physiological Objective</div>
-                   <p className="text-slate-300 text-sm leading-relaxed">{SUPPLEMENT_INFO[activeSupplement].why}</p>
-                 </div>
-              </div>
-            ) : (
-              <p className="text-slate-400">No specific detail data for this supplement.</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* NAVIGATION */}
-      <nav className="fixed bottom-0 w-full lg:relative lg:w-64 bg-slate-900 border-t lg:border-t-0 lg:border-r border-slate-800 z-50 flex-shrink-0">
-        <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
-          <div className="hidden lg:block mb-8">
-            <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
-            <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V1.4</div>
-          </div>
+        // --- MAIN APP COMPONENT ---
+        function TrainingApp() {
+          const [activeTab, setActiveTab] = useState('dashboard');
+          const [week, setWeek] = useState(1);
+          const [day, setDay] = useState(0); 
+          const [checkedItems, setCheckedItems] = useState({});
+          const [targetRecovery, setTargetRecovery] = useState(null);
+          const [activeSupplement, setActiveSupplement] = useState(null); 
           
-          <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
-          <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
-          <NavButton id="fuel" icon={Flame} label="FUEL" active={activeTab === 'fuel'} onClick={() => setActiveTab('fuel')} />
-          <NavButton id="recovery" icon={Activity} label="RECOVERY" active={activeTab === 'recovery'} onClick={() => setActiveTab('recovery')} />
-          <NavButton id="gear" icon={Settings} label="GEAR" active={activeTab === 'gear'} onClick={() => setActiveTab('gear')} />
-        </div>
-      </nav>
+          // Gear state
+          const [temp, setTemp] = useState("30-40F");
+          const [cond, setCond] = useState("Dry");
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-y-auto p-4 pb-24 lg:p-8 no-scrollbar scroll-smooth">
-        {activeTab === 'dashboard' && (
-          <DashboardView 
-            week={week} setWeek={setWeek} 
-            day={day} setDay={setDay} 
-            checkedItems={checkedItems} toggleCheck={toggleCheck}
-            jumpToRecovery={jumpToRecovery}
-            jumpToFuel={jumpToFuel}
-            openSuppModal={setActiveSupplement}
-          />
-        )}
-        {activeTab === 'calendar' && <CalendarView goToDay={goToDay} />}
-        {activeTab === 'fuel' && <FuelView week={week} day={day} />}
-        {activeTab === 'recovery' && <RecoveryView targetRecovery={targetRecovery} />}
-        {activeTab === 'gear' && <GearView temp={temp} setTemp={setTemp} cond={cond} setCond={setCond} />}
-      </main>
-    </div>
-  );
-}
+          // Load checked items from local storage on mount
+          useEffect(() => {
+             const saved = localStorage.getItem('omw_checked');
+             if (saved) setCheckedItems(JSON.parse(saved));
+          }, []);
 
-// --- SUB COMPONENTS ---
+          // Save checked items when changed
+          const toggleCheck = (id) => {
+             const newState = { ...checkedItems, [id]: !checkedItems[id] };
+             setCheckedItems(newState);
+             localStorage.setItem('omw_checked', JSON.stringify(newState));
+          };
 
-function NavButton({ id, icon: Icon, label, active, onClick }) {
-  return (
-    <button onClick={onClick} className={`flex flex-col lg:flex-row items-center lg:px-4 lg:py-3 rounded-md transition-all ${active ? 'text-blue-400 bg-slate-800 shadow-lg shadow-blue-900/10' : 'text-slate-500 hover:bg-slate-800'}`}>
-      <Icon className="w-5 h-5 mb-1 lg:mb-0 lg:mr-3" />
-      <span className="text-[10px] lg:text-sm font-bold">{label}</span>
-    </button>
-  );
-}
+          const jumpToRecovery = (recId) => {
+            setTargetRecovery(recId);
+            setActiveTab('recovery');
+          };
 
-function CalendarView({ goToDay }) {
-  return (
-    <div className="animate-in fade-in duration-500">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-1">Training Calendar</h2>
-        <p className="text-slate-400 text-sm">9-Week Overview</p>
-      </div>
+          const jumpToFuel = () => setActiveTab('fuel');
 
-      <div className="grid grid-cols-8 gap-2 text-center text-xs font-bold text-slate-500 uppercase mb-2">
-        <div className="text-left pl-2">Week</div>
-        <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-      </div>
+          const goToDay = (w, d) => {
+            setWeek(w);
+            setDay(d);
+            setActiveTab('dashboard');
+          };
 
-      <div className="space-y-2">
-        {Object.entries(WEEKS).map(([wNum, data]) => (
-          <div key={wNum} className="grid grid-cols-8 gap-2 items-center">
-            <div className="text-left pl-2 text-xs font-bold text-slate-400">W{wNum}</div>
-            {data.days.map((d, i) => {
-              // Determine color based on workout type in that day
-              // We check the first workout type mostly, or if it's a Double
-              const mainType = d.workouts[0]?.t || "Rest";
-              const isDouble = d.workouts.length > 1;
-              
-              let bgClass = "bg-slate-800 border-slate-700 text-slate-500";
-              let text = "";
-              
-              if (mainType === "Run") { bgClass = "bg-emerald-900/40 border-emerald-500/30 text-emerald-400"; text = "RUN"; }
-              else if (mainType === "Swim") { bgClass = "bg-blue-900/40 border-blue-500/30 text-blue-400"; text = "SWIM"; }
-              else if (mainType === "Bike") { bgClass = "bg-orange-900/40 border-orange-500/30 text-orange-400"; text = "BIKE"; }
-              else if (mainType === "Rest") { bgClass = "bg-slate-800 border-slate-700 text-slate-600"; text = "REST"; }
-              
-              if (isDouble) {
-                 text = "DBL";
-                 bgClass = "bg-purple-900/40 border-purple-500/30 text-purple-300";
-              }
-
-              return (
-                <button 
-                  key={i} 
-                  onClick={() => goToDay(parseInt(wNum), i)}
-                  className={`h-10 rounded-sm border flex items-center justify-center text-[10px] font-bold transition-all hover:scale-105 hover:brightness-110 ${bgClass}`}
-                >
-                  {text}
-                </button>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DashboardView({ week, setWeek, day, setDay, checkedItems, toggleCheck, jumpToRecovery, jumpToFuel, openSuppModal }) {
-  const weekData = WEEKS[week];
-  const dayData = weekData.days[day];
-
-  return (
-    <div className="animate-in fade-in duration-500">
-      
-      {/* HEADER DASHBOARD STYLE */}
-      <div className="flex items-end justify-between mb-6">
-        <div>
-           <div className="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded-sm inline-block font-bold uppercase mb-2">
-             Week {week} • {weekData.title}
-           </div>
-           <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus.toUpperCase()}</h2>
-        </div>
-        <div className="hidden md:block text-right">
-           <div className="text-xs text-slate-500 font-bold uppercase">Current Block</div>
-           <div className="text-white font-medium">Phase 1</div>
-        </div>
-      </div>
-
-      {/* SQUARE TABS: WEEK SELECTOR */}
-      <div className="flex overflow-x-auto gap-1 pb-4 no-scrollbar mb-4">
-        {Object.keys(WEEKS).map((w) => (
-          <button key={w} onClick={() => { setWeek(Number(w)); setDay(0); }} className={`flex-shrink-0 w-10 h-10 rounded-sm text-xs font-bold transition-all border ${week === Number(w) ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
-            W{w}
-          </button>
-        ))}
-      </div>
-
-      {/* SQUARE TABS: DAY SELECTOR */}
-      <div className="grid grid-cols-7 gap-1 mb-8">
-        {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((d, i) => (
-          <button key={i} onClick={() => setDay(i)} className={`h-10 rounded-sm text-[10px] font-bold transition-all border ${day === i ? 'bg-slate-200 border-white text-slate-900' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
-            {d}
-          </button>
-        ))}
-      </div>
-
-      {/* MAIN DASHBOARD GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* LEFT COL: WORKOUTS (Takes 2/3 width on LG) */}
-        <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Daily Objectives</h3>
-          {dayData.workouts.map((workout, idx) => (
-            <WorkoutCard 
-              key={idx} 
-              data={workout} 
-              uid={`w${week}d${day}w${idx}`} 
-              checkedItems={checkedItems} 
-              toggleCheck={toggleCheck}
-              jumpToRecovery={jumpToRecovery}
-              jumpToFuel={jumpToFuel}
-            />
-          ))}
-        </div>
-
-        {/* RIGHT COL: WIDGETS */}
-        <div className="space-y-4">
-          
-          {/* DAILY STACK WIDGET */}
-          <div className="bg-slate-800 rounded-md p-4 border border-slate-700">
-             <div className="flex items-center justify-between mb-4">
-                <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2">
-                  <Zap size={12} className="text-yellow-500"/> Supplement Stack
-                </div>
-                <div className="text-[10px] text-slate-600 font-mono">
-                  {dayData.stack.length} ITEMS
-                </div>
-             </div>
-             <div className="space-y-2">
-               {dayData.stack.map((item, i) => {
-                 const uid = `w${week}d${day}s${i}`;
-                 return (
-                   <div key={i} className="flex items-center justify-between bg-slate-900/50 p-2 rounded-sm border border-slate-700/50 hover:bg-slate-900 transition-colors cursor-pointer group" onClick={() => openSuppModal(item)}>
-                      <div className="flex items-center gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); toggleCheck(uid); }} className={checkedItems[uid] ? 'text-green-500' : 'text-slate-600 hover:text-slate-400'}>
-                           {checkedItems[uid] ? <CheckCircle2 size={14}/> : <Circle size={14}/>}
-                        </button>
-                        <span className={`text-xs font-bold ${checkedItems[uid] ? 'text-slate-500 line-through' : 'text-slate-300 group-hover:text-white'}`}>
-                          {item}
-                        </span>
-                      </div>
-                      <Info size={12} className="text-slate-600 group-hover:text-blue-400"/>
-                   </div>
-                 )
-               })}
-            </div>
-          </div>
-
-          {/* FUEL WIDGET */}
-          <div className="bg-slate-800 rounded-md p-4 border border-slate-700 relative overflow-hidden group">
-             <div className={`absolute top-0 right-0 p-1.5 rounded-bl-lg ${
-                dayData.workouts[0].fl === 'High' ? 'bg-green-500 text-black' : 
-                dayData.workouts[0].fl === 'Low' ? 'bg-red-500 text-white' : 
-                'bg-yellow-500 text-black'
-             }`}>
-               <Flame size={14} />
-             </div>
-             <div className="text-[10px] text-slate-500 font-bold uppercase mb-2">Fueling Strategy</div>
-             <div className="text-xl font-bold text-white mb-1">{dayData.workouts[0].fl} Flux</div>
-             <p className="text-[10px] text-slate-400 leading-relaxed mb-3">
-               {FLUX_DATA[dayData.workouts[0].fl].desc}
-             </p>
-             <button onClick={jumpToFuel} className="w-full py-2 rounded-sm bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition-colors">
-               View Menu
-             </button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function WorkoutCard({ data, uid, checkedItems, toggleCheck, jumpToRecovery, jumpToFuel }) {
-  const colors = {
-    'Swim': { head: 'bg-blue-600', text: 'text-blue-400', border: 'border-blue-500/30' },
-    'Run': { head: 'bg-emerald-600', text: 'text-emerald-400', border: 'border-emerald-500/30' },
-    'Bike': { head: 'bg-orange-600', text: 'text-orange-400', border: 'border-orange-500/30' }
-  }[data.t] || { head: 'bg-slate-600', text: 'text-slate-400', border: 'border-slate-500/30' };
-
-  return (
-    <div className={`bg-slate-800 rounded-md overflow-hidden border ${colors.border} shadow-sm`}>
-      <div className={`${colors.head} px-4 py-3 flex justify-between items-center`}>
-        <div className="flex items-center gap-2">
-           <span className="font-bold text-white uppercase text-sm tracking-wider">{data.t}</span>
-           <span className="text-white/60 text-xs">|</span>
-           <span className="text-white font-mono text-xs">{data.dur}</span>
-        </div>
-        <span className="bg-black/20 px-2 py-0.5 rounded text-[10px] font-bold text-white/90">{data.tss} TSS</span>
-      </div>
-      
-      <div className="p-5">
-        <h3 className="font-bold text-xl text-white mb-1">{data.title}</h3>
-        <div className="text-xs text-slate-400 font-mono mb-4 uppercase tracking-wider flex items-center gap-2">
-          <Dumbbell size={12}/> Goal: {data.goal}
-        </div>
-        
-        <div className="bg-slate-900/50 p-4 rounded-sm mb-4 border-l-2 border-slate-600">
-           {data.ex.map((line, i) => (
-             <div key={i} className="mb-2 last:mb-0 text-sm font-medium text-slate-300 flex items-start gap-2">
-               <span className="text-slate-600 mt-1.5 w-1 h-1 bg-slate-600 rounded-full flex-shrink-0"></span>
-               {line}
-             </div>
-           ))}
-        </div>
-
-        <div className="flex gap-2">
-          <button onClick={() => jumpToRecovery(data.rec)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
-             <Activity size={12}/> {RECOVERY_ROUTINES[data.rec].title}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FuelView({ week, day }) {
-  // Use first workout to determine flux for the day
-  const currentFlux = WEEKS[week].days[day].workouts[0].fl;
-  const data = FLUX_DATA[currentFlux];
-  const colors = {
-    'green': { bg: 'bg-emerald-900/20', border: 'border-emerald-500/50', icon: 'text-emerald-400' },
-    'yellow': { bg: 'bg-yellow-900/20', border: 'border-yellow-500/50', icon: 'text-yellow-400' },
-    'red': { bg: 'bg-red-900/20', border: 'border-red-500/50', icon: 'text-red-400' }
-  }[data.color];
-
-  return (
-    <div className="animate-in fade-in space-y-6">
-      <div className={`p-6 rounded-md border ${colors.bg} ${colors.border}`}>
-        <div className="flex items-center gap-3 mb-2">
-          <Flame className={`${colors.icon} w-6 h-6`} />
-          <h2 className="text-2xl font-bold text-white">{currentFlux} Flux</h2>
-        </div>
-        <p className="text-slate-300 text-sm leading-relaxed">{data.desc}</p>
-      </div>
-      <div className="bg-slate-800 rounded-md overflow-hidden border border-slate-700">
-        <div className="bg-slate-900 p-4 border-b border-slate-700 font-bold text-white text-xs uppercase tracking-wider">Daily Protocol</div>
-        <div className="divide-y divide-slate-700">
-          <FuelRow icon={Coffee} label="Breakfast" val={data.b} />
-          <FuelRow icon={Utensils} label="Lunch" val={data.l} />
-          <FuelRow icon={Zap} label="Pre-Workout" val={data.pre} />
-          <FuelRow icon={Droplets} label="Intra-Workout" val={data.intra} />
-          <FuelRow icon={Utensils} label="Dinner" val={data.d} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FuelRow({ icon: Icon, label, val }) {
-  return (
-    <div className="p-4 flex gap-4 items-center">
-      <Icon className="text-slate-500 w-5 h-5 flex-shrink-0" />
-      <div>
-        <div className="text-[10px] text-slate-500 font-bold uppercase">{label}</div>
-        <div className="text-slate-200 text-sm font-medium">{val}</div>
-      </div>
-    </div>
-  );
-}
-
-function RecoveryView({ targetRecovery }) {
-  useEffect(() => {
-    if (targetRecovery) {
-      const el = document.getElementById(`rec-${targetRecovery}`);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [targetRecovery]);
-
-  return (
-    <div className="animate-in fade-in">
-      <div className="bg-gradient-to-r from-indigo-900/50 to-slate-900 p-6 rounded-md border border-indigo-500/30 mb-6">
-        <h2 className="text-2xl font-bold text-white mb-1">Recovery Vault</h2>
-        <p className="text-indigo-200/70 text-sm">Mechanical routines to reset the nervous system.</p>
-      </div>
-      <div className="grid gap-4">
-        {Object.values(RECOVERY_ROUTINES).map((r) => {
-          const isTarget = targetRecovery === r.id;
           return (
-            <div key={r.id} id={`rec-${r.id}`} className={`p-5 rounded-md border transition-all ${isTarget ? 'border-indigo-500 bg-indigo-900/20 ring-1 ring-indigo-500' : 'border-slate-700 bg-slate-800'}`}>
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">{r.title}</h3>
-                  <p className="text-indigo-400 text-xs font-bold uppercase tracking-wider">{r.sub}</p>
+            <div className="flex h-screen flex-col lg:flex-row bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30 overflow-hidden relative">
+              
+              {/* SUPPLEMENT MODAL */}
+              {activeSupplement && (
+                <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setActiveSupplement(null)}>
+                  <div className="bg-slate-900 border border-slate-700 p-6 rounded-md max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-xl font-bold text-white">{SUPPLEMENT_INFO[activeSupplement]?.title || activeSupplement}</h3>
+                      <button onClick={() => setActiveSupplement(null)} className="text-slate-400 hover:text-white"><X size={20}/></button>
+                    </div>
+                    {SUPPLEMENT_INFO[activeSupplement] ? (
+                      <div className="space-y-4">
+                         <div className="bg-slate-800 p-3 rounded-md">
+                           <div className="text-[10px] uppercase font-bold text-slate-500">Dose & Timing</div>
+                           <div className="text-blue-400 font-bold">{SUPPLEMENT_INFO[activeSupplement].dose}</div>
+                         </div>
+                         <div>
+                           <div className="text-[10px] uppercase font-bold text-slate-500 mb-1">Physiological Objective</div>
+                           <p className="text-slate-300 text-sm leading-relaxed">{SUPPLEMENT_INFO[activeSupplement].why}</p>
+                         </div>
+                      </div>
+                    ) : (
+                      <p className="text-slate-400">No specific detail data for this supplement.</p>
+                    )}
+                  </div>
                 </div>
-                <span className="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-400 border border-slate-700 font-mono">{r.time}</span>
+              )}
+
+              {/* NAVIGATION */}
+              <nav className="fixed bottom-0 w-full lg:relative lg:w-64 bg-slate-900 border-t lg:border-t-0 lg:border-r border-slate-800 z-50 flex-shrink-0">
+                <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
+                  <div className="hidden lg:block mb-8">
+                    <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
+                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V1.4</div>
+                  </div>
+                  
+                  <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+                  <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
+                  <NavButton id="fuel" icon={Flame} label="FUEL" active={activeTab === 'fuel'} onClick={() => setActiveTab('fuel')} />
+                  <NavButton id="recovery" icon={Activity} label="RECOVERY" active={activeTab === 'recovery'} onClick={() => setActiveTab('recovery')} />
+                  <NavButton id="gear" icon={Settings} label="GEAR" active={activeTab === 'gear'} onClick={() => setActiveTab('gear')} />
+                </div>
+              </nav>
+
+              {/* MAIN CONTENT */}
+              <main className="flex-1 overflow-y-auto p-4 pb-24 lg:p-8 no-scrollbar scroll-smooth">
+                {activeTab === 'dashboard' && (
+                  <DashboardView 
+                    week={week} setWeek={setWeek} 
+                    day={day} setDay={setDay} 
+                    checkedItems={checkedItems} toggleCheck={toggleCheck}
+                    jumpToRecovery={jumpToRecovery}
+                    jumpToFuel={jumpToFuel}
+                    openSuppModal={setActiveSupplement}
+                  />
+                )}
+                {activeTab === 'calendar' && <CalendarView goToDay={goToDay} />}
+                {activeTab === 'fuel' && <FuelView week={week} day={day} />}
+                {activeTab === 'recovery' && <RecoveryView targetRecovery={targetRecovery} />}
+                {activeTab === 'gear' && <GearView temp={temp} setTemp={setTemp} cond={cond} setCond={setCond} />}
+              </main>
+            </div>
+          );
+        }
+
+        // --- SUB COMPONENTS ---
+
+        function NavButton({ id, icon: Icon, label, active, onClick }) {
+          return (
+            <button onClick={onClick} className={`flex flex-col lg:flex-row items-center lg:px-4 lg:py-3 rounded-md transition-all ${active ? 'text-blue-400 bg-slate-800 shadow-lg shadow-blue-900/10' : 'text-slate-500 hover:bg-slate-800'}`}>
+              <Icon className="w-5 h-5 mb-1 lg:mb-0 lg:mr-3" />
+              <span className="text-[10px] lg:text-sm font-bold">{label}</span>
+            </button>
+          );
+        }
+
+        function CalendarView({ goToDay }) {
+          return (
+            <div className="animate-in fade-in duration-500">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-1">Training Calendar</h2>
+                <p className="text-slate-400 text-sm">9-Week Overview</p>
               </div>
-              <div className="space-y-3 relative">
-                <div className="absolute left-2.5 top-2 bottom-2 w-px bg-slate-700/50"></div>
-                {r.steps.map((step, i) => (
-                  <div key={i} className="flex gap-3 relative z-10">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-[10px] flex items-center justify-center text-slate-400 font-mono mt-0.5">{i + 1}</div>
-                    <span className="text-sm text-slate-300 leading-snug">{step}</span>
+
+              <div className="grid grid-cols-8 gap-2 text-center text-xs font-bold text-slate-500 uppercase mb-2">
+                <div className="text-left pl-2">Week</div>
+                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+              </div>
+
+              <div className="space-y-2">
+                {Object.entries(WEEKS).map(([wNum, data]) => (
+                  <div key={wNum} className="grid grid-cols-8 gap-2 items-center">
+                    <div className="text-left pl-2 text-xs font-bold text-slate-400">W{wNum}</div>
+                    {data.days.map((d, i) => {
+                      const mainType = d.workouts[0]?.t || "Rest";
+                      const isDouble = d.workouts.length > 1;
+                      
+                      let bgClass = "bg-slate-800 border-slate-700 text-slate-500";
+                      let text = "";
+                      
+                      if (mainType === "Run") { bgClass = "bg-emerald-900/40 border-emerald-500/30 text-emerald-400"; text = "RUN"; }
+                      else if (mainType === "Swim") { bgClass = "bg-blue-900/40 border-blue-500/30 text-blue-400"; text = "SWIM"; }
+                      else if (mainType === "Bike") { bgClass = "bg-orange-900/40 border-orange-500/30 text-orange-400"; text = "BIKE"; }
+                      else if (mainType === "Rest") { bgClass = "bg-slate-800 border-slate-700 text-slate-600"; text = "REST"; }
+                      
+                      if (isDouble) {
+                         text = "DBL";
+                         bgClass = "bg-purple-900/40 border-purple-500/30 text-purple-300";
+                      }
+
+                      return (
+                        <button 
+                          key={i} 
+                          onClick={() => goToDay(parseInt(wNum), i)}
+                          className={`h-10 rounded-sm border flex items-center justify-center text-[10px] font-bold transition-all hover:scale-105 hover:brightness-110 ${bgClass}`}
+                        >
+                          {text}
+                        </button>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
             </div>
           );
-        })}
-      </div>
-    </div>
-  );
-}
+        }
 
-function GearView({ temp, setTemp, cond, setCond }) {
-  const data = GEAR_MATRIX[temp][cond];
-  const temps = Object.keys(GEAR_MATRIX);
-  return (
-    <div className="animate-in fade-in space-y-6">
-      <div className="bg-slate-800 p-6 rounded-md border border-slate-700">
-        <h2 className="text-2xl font-bold text-white mb-6">Gear Calculator</h2>
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Temp</label>
-            <select value={temp} onChange={(e) => setTemp(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
-              {temps.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Condition</label>
-            <select value={cond} onChange={(e) => setCond(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
-              <option value="Dry">Dry</option>
-              <option value="Wet">Wet / Snow</option>
-            </select>
-          </div>
-        </div>
-        <div className="bg-slate-900 rounded-md p-5 border border-slate-700 space-y-5">
-          <GearRow icon={Wind} label="Upper Body" val={data.u} color="blue" />
-          <GearRow icon={Activity} label="Lower Body" val={data.l} color="blue" />
-          <GearRow icon={Thermometer} label="Extremities" val={data.e} color="orange" />
-        </div>
-      </div>
-    </div>
-  );
-}
+        function DashboardView({ week, setWeek, day, setDay, checkedItems, toggleCheck, jumpToRecovery, jumpToFuel, openSuppModal }) {
+          const weekData = WEEKS[week];
+          const dayData = weekData.days[day];
 
-function GearRow({ icon: Icon, label, val, color }) {
-  const colorClasses = color === 'blue' ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400';
-  return (
-    <div className="flex gap-4 items-start">
-      <div className={`${colorClasses} p-2 rounded mt-1`}><Icon className="w-4 h-4" /></div>
-      <div>
-        <div className="text-[10px] text-slate-500 uppercase font-bold">{label}</div>
-        <div className="text-white font-medium text-sm">{val}</div>
-      </div>
-    </div>
-  );
-}
+          return (
+            <div className="animate-in fade-in duration-500">
+              <div className="flex items-end justify-between mb-6">
+                <div>
+                   <div className="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded-sm inline-block font-bold uppercase mb-2">
+                     Week {week} • {weekData.title}
+                   </div>
+                   <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus.toUpperCase()}</h2>
+                </div>
+                <div className="hidden md:block text-right">
+                   <div className="text-xs text-slate-500 font-bold uppercase">Current Block</div>
+                   <div className="text-white font-medium">Phase 1</div>
+                </div>
+              </div>
+
+              <div className="flex overflow-x-auto gap-1 pb-4 no-scrollbar mb-4">
+                {Object.keys(WEEKS).map((w) => (
+                  <button key={w} onClick={() => { setWeek(Number(w)); setDay(0); }} className={`flex-shrink-0 w-10 h-10 rounded-sm text-xs font-bold transition-all border ${week === Number(w) ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
+                    W{w}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-1 mb-8">
+                {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((d, i) => (
+                  <button key={i} onClick={() => setDay(i)} className={`h-10 rounded-sm text-[10px] font-bold transition-all border ${day === i ? 'bg-slate-200 border-white text-slate-900' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
+                    {d}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-4">
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Daily Objectives</h3>
+                  {dayData.workouts.map((workout, idx) => (
+                    <WorkoutCard 
+                      key={idx} 
+                      data={workout} 
+                      uid={`w${week}d${day}w${idx}`} 
+                      checkedItems={checkedItems} 
+                      toggleCheck={toggleCheck}
+                      jumpToRecovery={jumpToRecovery}
+                      jumpToFuel={jumpToFuel}
+                    />
+                  ))}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-slate-800 rounded-md p-4 border border-slate-700">
+                     <div className="flex items-center justify-between mb-4">
+                        <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2">
+                          <Zap size={12} className="text-yellow-500"/> Supplement Stack
+                        </div>
+                        <div className="text-[10px] text-slate-600 font-mono">
+                          {dayData.stack ? dayData.stack.length : 0} ITEMS
+                        </div>
+                     </div>
+                     <div className="space-y-2">
+                       {dayData.stack && dayData.stack.map((item, i) => {
+                         const uid = `w${week}d${day}s${i}`;
+                         return (
+                           <div key={i} className="flex items-center justify-between bg-slate-900/50 p-2 rounded-sm border border-slate-700/50 hover:bg-slate-900 transition-colors cursor-pointer group" onClick={() => openSuppModal(item)}>
+                              <div className="flex items-center gap-2">
+                                <button onClick={(e) => { e.stopPropagation(); toggleCheck(uid); }} className={checkedItems[uid] ? 'text-green-500' : 'text-slate-600 hover:text-slate-400'}>
+                                   {checkedItems[uid] ? <CheckCircle2 size={14}/> : <Circle size={14}/>}
+                                </button>
+                                <span className={`text-xs font-bold ${checkedItems[uid] ? 'text-slate-500 line-through' : 'text-slate-300 group-hover:text-white'}`}>
+                                  {item}
+                                </span>
+                              </div>
+                              <Info size={12} className="text-slate-600 group-hover:text-blue-400"/>
+                           </div>
+                         )
+                       })}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-800 rounded-md p-4 border border-slate-700 relative overflow-hidden group">
+                     <div className={`absolute top-0 right-0 p-1.5 rounded-bl-lg ${
+                        dayData.workouts[0].fl === 'High' ? 'bg-green-500 text-black' : 
+                        dayData.workouts[0].fl === 'Low' ? 'bg-red-500 text-white' : 
+                        'bg-yellow-500 text-black'
+                     }`}>
+                       <Flame size={14} />
+                     </div>
+                     <div className="text-[10px] text-slate-500 font-bold uppercase mb-2">Fueling Strategy</div>
+                     <div className="text-xl font-bold text-white mb-1">{dayData.workouts[0].fl} Flux</div>
+                     <p className="text-[10px] text-slate-400 leading-relaxed mb-3">
+                       {FLUX_DATA[dayData.workouts[0].fl].desc}
+                     </p>
+                     <button onClick={jumpToFuel} className="w-full py-2 rounded-sm bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition-colors">
+                       View Menu
+                     </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function WorkoutCard({ data, uid, checkedItems, toggleCheck, jumpToRecovery, jumpToFuel }) {
+          const colors = {
+            'Swim': { head: 'bg-blue-600', text: 'text-blue-400', border: 'border-blue-500/30' },
+            'Run': { head: 'bg-emerald-600', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+            'Bike': { head: 'bg-orange-600', text: 'text-orange-400', border: 'border-orange-500/30' }
+          }[data.t] || { head: 'bg-slate-600', text: 'text-slate-400', border: 'border-slate-500/30' };
+
+          return (
+            <div className={`bg-slate-800 rounded-md overflow-hidden border ${colors.border} shadow-sm`}>
+              <div className={`${colors.head} px-4 py-3 flex justify-between items-center`}>
+                <div className="flex items-center gap-2">
+                   <span className="font-bold text-white uppercase text-sm tracking-wider">{data.t}</span>
+                   <span className="text-white/60 text-xs">|</span>
+                   <span className="text-white font-mono text-xs">{data.dur}</span>
+                </div>
+                <span className="bg-black/20 px-2 py-0.5 rounded text-[10px] font-bold text-white/90">{data.tss} TSS</span>
+              </div>
+              
+              <div className="p-5">
+                <h3 className="font-bold text-xl text-white mb-1">{data.title}</h3>
+                <div className="text-xs text-slate-400 font-mono mb-4 uppercase tracking-wider flex items-center gap-2">
+                  <Dumbbell size={12}/> Goal: {data.goal}
+                </div>
+                
+                <div className="bg-slate-900/50 p-4 rounded-sm mb-4 border-l-2 border-slate-600">
+                   {data.ex.map((line, i) => (
+                     <div key={i} className="mb-2 last:mb-0 text-sm font-medium text-slate-300 flex items-start gap-2">
+                       <span className="text-slate-600 mt-1.5 w-1 h-1 bg-slate-600 rounded-full flex-shrink-0"></span>
+                       {line}
+                     </div>
+                   ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <button onClick={() => jumpToRecovery(data.rec)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
+                     <Activity size={12}/> {RECOVERY_ROUTINES[data.rec].title}
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function FuelView({ week, day }) {
+          const currentFlux = WEEKS[week].days[day].workouts[0].fl;
+          const data = FLUX_DATA[currentFlux];
+          const colors = {
+            'green': { bg: 'bg-emerald-900/20', border: 'border-emerald-500/50', icon: 'text-emerald-400' },
+            'yellow': { bg: 'bg-yellow-900/20', border: 'border-yellow-500/50', icon: 'text-yellow-400' },
+            'red': { bg: 'bg-red-900/20', border: 'border-red-500/50', icon: 'text-red-400' }
+          }[data.color];
+
+          return (
+            <div className="animate-in fade-in space-y-6">
+              <div className={`p-6 rounded-md border ${colors.bg} ${colors.border}`}>
+                <div className="flex items-center gap-3 mb-2">
+                  <Flame className={`${colors.icon} w-6 h-6`} />
+                  <h2 className="text-2xl font-bold text-white">{currentFlux} Flux</h2>
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed">{data.desc}</p>
+              </div>
+              <div className="bg-slate-800 rounded-md overflow-hidden border border-slate-700">
+                <div className="bg-slate-900 p-4 border-b border-slate-700 font-bold text-white text-xs uppercase tracking-wider">Daily Protocol</div>
+                <div className="divide-y divide-slate-700">
+                  <FuelRow icon={Coffee} label="Breakfast" val={data.b} />
+                  <FuelRow icon={Utensils} label="Lunch" val={data.l} />
+                  <FuelRow icon={Zap} label="Pre-Workout" val={data.pre} />
+                  <FuelRow icon={Droplets} label="Intra-Workout" val={data.intra} />
+                  <FuelRow icon={Utensils} label="Dinner" val={data.d} />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function FuelRow({ icon: Icon, label, val }) {
+          return (
+            <div className="p-4 flex gap-4 items-center">
+              <Icon className="text-slate-500 w-5 h-5 flex-shrink-0" />
+              <div>
+                <div className="text-[10px] text-slate-500 font-bold uppercase">{label}</div>
+                <div className="text-slate-200 text-sm font-medium">{val}</div>
+              </div>
+            </div>
+          );
+        }
+
+        function RecoveryView({ targetRecovery }) {
+          useEffect(() => {
+            if (targetRecovery) {
+              const el = document.getElementById(`rec-${targetRecovery}`);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, [targetRecovery]);
+
+          return (
+            <div className="animate-in fade-in">
+              <div className="bg-gradient-to-r from-indigo-900/50 to-slate-900 p-6 rounded-md border border-indigo-500/30 mb-6">
+                <h2 className="text-2xl font-bold text-white mb-1">Recovery Vault</h2>
+                <p className="text-indigo-200/70 text-sm">Mechanical routines to reset the nervous system.</p>
+              </div>
+              <div className="grid gap-4">
+                {Object.values(RECOVERY_ROUTINES).map((r) => {
+                  const isTarget = targetRecovery === r.id;
+                  return (
+                    <div key={r.id} id={`rec-${r.id}`} className={`p-5 rounded-md border transition-all ${isTarget ? 'border-indigo-500 bg-indigo-900/20 ring-1 ring-indigo-500' : 'border-slate-700 bg-slate-800'}`}>
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-bold text-white">{r.title}</h3>
+                          <p className="text-indigo-400 text-xs font-bold uppercase tracking-wider">{r.sub}</p>
+                        </div>
+                        <span className="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-400 border border-slate-700 font-mono">{r.time}</span>
+                      </div>
+                      <div className="space-y-3 relative">
+                        <div className="absolute left-2.5 top-2 bottom-2 w-px bg-slate-700/50"></div>
+                        {r.steps.map((step, i) => (
+                          <div key={i} className="flex gap-3 relative z-10">
+                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-[10px] flex items-center justify-center text-slate-400 font-mono mt-0.5">{i + 1}</div>
+                            <span className="text-sm text-slate-300 leading-snug">{step}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        function GearView({ temp, setTemp, cond, setCond }) {
+          const data = GEAR_MATRIX[temp][cond];
+          const temps = Object.keys(GEAR_MATRIX);
+          return (
+            <div className="animate-in fade-in space-y-6">
+              <div className="bg-slate-800 p-6 rounded-md border border-slate-700">
+                <h2 className="text-2xl font-bold text-white mb-6">Gear Calculator</h2>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Temp</label>
+                    <select value={temp} onChange={(e) => setTemp(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
+                      {temps.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Condition</label>
+                    <select value={cond} onChange={(e) => setCond(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
+                      <option value="Dry">Dry</option>
+                      <option value="Wet">Wet / Snow</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="bg-slate-900 rounded-md p-5 border border-slate-700 space-y-5">
+                  <GearRow icon={Wind} label="Upper Body" val={data.u} color="blue" />
+                  <GearRow icon={Activity} label="Lower Body" val={data.l} color="blue" />
+                  <GearRow icon={Thermometer} label="Extremities" val={data.e} color="orange" />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function GearRow({ icon: Icon, label, val, color }) {
+          const colorClasses = color === 'blue' ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400';
+          return (
+            <div className="flex gap-4 items-start">
+              <div className={`${colorClasses} p-2 rounded mt-1`}><Icon className="w-4 h-4" /></div>
+              <div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold">{label}</div>
+                <div className="text-white font-medium text-sm">{val}</div>
+              </div>
+            </div>
+          );
+        }
+
+        // --- RENDER ---
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<TrainingApp />);
+    </script>
+</body>
+</html>
