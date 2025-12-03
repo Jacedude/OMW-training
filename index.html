@@ -67,6 +67,7 @@
         const Dumbbell = (p) => <Icon name="Dumbbell" {...p} />;
         const MessageSquare = (p) => <Icon name="MessageSquare" {...p} />;
         const Pill = (p) => <Icon name="Pill" {...p} />;
+        const Bike = (p) => <Icon name="Bike" {...p} />;
 
         const SUPPLEMENT_INFO = {
           "Creatine": { type: "Daily", title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
@@ -78,6 +79,32 @@
           "Sodium": { type: "Acute", title: "Sodium Load", dose: "1500mg", why: "Expands plasma volume for altitude and cooling." },
           "Gel": { type: "Acute", title: "Energy Gel", dose: "45g Carb", why: "Immediate glycogen availability." },
           "Carbs": { type: "Acute", title: "Liquid Carbs", dose: "100g/hr", why: "Sustain high output without digestive distress." }
+        };
+
+        const INTRA_FUEL_OPTIONS = {
+            'High': {
+                target: '100g/hr',
+                options: [
+                    "Combo A: 2 scoops Go-To + Hydrogel (100g)",
+                    "Combo B: 2 scoops Skratch + Bloks (88g)",
+                    "Combo C: 3 scoops Go-To + Picky Bar (100g)"
+                ]
+            },
+            'Moderate': {
+                target: '50g/hr',
+                options: [
+                    "Combo A: 1 scoop Go-To + Picky Bar (50g)",
+                    "Combo B: 1.5 scoops Skratch + Bloks (54g)",
+                    "Combo C: 2 scoops Go-To (50g)"
+                ]
+            },
+            'Low': {
+                target: '0g/hr',
+                options: [
+                    "Water + Electrolytes Only",
+                    "Diluted Skratch if needed"
+                ]
+            }
         };
 
         const RECOVERY_ROUTINES = {
@@ -95,10 +122,10 @@
         };
 
         const GEAR_MATRIX = {
-          "10-20F": { "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot" }, "Wet": { u: "ADD: Hardshell Jacket", l: "ADD: Rain Trousers", e: "Neoprene Gloves / Vapor Socks" } },
-          "20-30F": { "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock" }, "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves / Tape Vents" } },
-          "30-40F": { "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers" }, "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie" } },
-          "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze" } }
+          "10-20F": { "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot", t: "Pirelli M (23/25psi)" }, "Wet": { u: "ADD: Hardshell Jacket", l: "ADD: Rain Trousers", e: "Neoprene Gloves / Vapor Socks", t: "Pirelli M (22/24psi)" } },
+          "20-30F": { "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock", t: "Vittoria Dry (32/34psi)" }, "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves / Tape Vents", t: "Pirelli M (24/26psi)" } },
+          "30-40F": { "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers", t: "Vittoria Dry (33/35psi)" }, "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie", t: "Pirelli M (25/27psi)" } },
+          "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger", t: "Vittoria Dry (34/36psi)" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze", t: "Pirelli M (26/28psi)" } }
         };
 
         // --- FULL 9-WEEK SCHEDULE ---
@@ -181,9 +208,9 @@
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "40m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Strides", dur: "30m", tss: 35, fl: "Moderate", rec: "D", goal: "Activation", ex: ["30m w/ 4x30s"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 35, fl: "High", rec: "C", goal: "Race Priming", ex: ["2x3m @ 245W"], supps: ["Caffeine"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "30m", tss: 20, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Jog", dur: "20m", tss: 15, fl: "Moderate", rec: "E", goal: "Shakeout", ex: ["20m Easy"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Load Spin", dur: "20m", tss: 10, fl: "High", rec: "B", goal: "Spin", ex: ["20m Spin", "Load"], supps: ["Sodium"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "OMW 10K", dur: "10K", tss: 100, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 10:00 AM"], supps: ["Caffeine", "Bicarb", "Nitrates"] }, { t: "Rest", title: "GAP", dur: "90m", tss: 0, fl: "High", rec: "A", goal: "Refuel", ex: ["Dry Clothes", "Heat"], supps: ["Carbs"] }, { t: "Bike", title: "OMW 40mi", dur: "40mi", tss: 150, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 12:00 PM"], supps: [] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Sodium"], workouts: [{ t: "Bike", title: "Load Spin", dur: "20m", tss: 10, fl: "High", rec: "B", goal: "Spin", ex: ["20m Spin", "Load"], supps: ["Sodium"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Sodium"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine", "Bicarb", "Nitrates"], workouts: [{ t: "Run", title: "OMW 10K", dur: "10K", tss: 100, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 10:00 AM"], supps: ["Caffeine", "Bicarb", "Nitrates"] }, { t: "Rest", title: "GAP", dur: "90m", tss: 0, fl: "High", rec: "A", goal: "Refuel", ex: ["Dry Clothes", "Heat"], supps: ["Carbs"] }, { t: "Bike", title: "OMW 40mi", dur: "40mi", tss: 150, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 12:00 PM"], supps: [] }] }
           ]}
         };
 
@@ -196,6 +223,7 @@
           const [comments, setComments] = useState({});
           const [targetRecovery, setTargetRecovery] = useState(null);
           const [activeSupplement, setActiveSupplement] = useState(null); 
+          const [activeFuelProtocol, setActiveFuelProtocol] = useState(null);
           const [temp, setTemp] = useState("30-40F");
           const [cond, setCond] = useState("Dry");
 
@@ -227,6 +255,10 @@
 
           const jumpToFuel = () => setActiveTab('fuel');
 
+          const openFuelModal = (flux) => {
+              setActiveFuelProtocol(flux);
+          }
+
           const goToDay = (w, d) => {
             setWeek(w);
             setDay(d);
@@ -239,7 +271,7 @@
           return (
             <div className="flex h-screen flex-col lg:flex-row bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30 overflow-hidden relative">
               
-              {/* MODAL */}
+              {/* SUPPLEMENT MODAL */}
               {activeSupplement && (
                 <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setActiveSupplement(null)}>
                   <div className="bg-slate-900 border border-slate-700 p-6 rounded-md max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -265,12 +297,35 @@
                 </div>
               )}
 
+              {/* FUEL MODAL */}
+              {activeFuelProtocol && (
+                <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setActiveFuelProtocol(null)}>
+                  <div className="bg-slate-900 border border-slate-700 p-6 rounded-md max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                          <h3 className="text-xl font-bold text-white">Intra-Workout Fueling</h3>
+                          <p className="text-sm text-slate-400">{activeFuelProtocol} Flux • {INTRA_FUEL_OPTIONS[activeFuelProtocol]?.target}</p>
+                      </div>
+                      <button onClick={() => setActiveFuelProtocol(null)} className="text-slate-400 hover:text-white"><X size={20}/></button>
+                    </div>
+                    <div className="space-y-3">
+                        <p className="text-[10px] uppercase font-bold text-slate-500">Recommended Options</p>
+                        {INTRA_FUEL_OPTIONS[activeFuelProtocol]?.options.map((opt, i) => (
+                            <div key={i} className="bg-slate-800 p-3 rounded-md text-sm text-slate-300 border border-slate-700">
+                                {opt}
+                            </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* NAV */}
               <nav className="fixed bottom-0 w-full lg:relative lg:w-64 bg-slate-900 border-t lg:border-t-0 lg:border-r border-slate-800 z-50 flex-shrink-0">
                 <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
                   <div className="hidden lg:block mb-8">
                     <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
-                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V1.9</div>
+                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V2.0</div>
                   </div>
                   <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                   <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
@@ -292,6 +347,7 @@
                     jumpToRecovery={jumpToRecovery}
                     jumpToFuel={jumpToFuel}
                     openSuppModal={setActiveSupplement}
+                    openFuelModal={openFuelModal}
                   />
                 )}
                 {activeTab === 'calendar' && <CalendarView goToDay={goToDay} />}
@@ -353,7 +409,7 @@
           );
         }
 
-        function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal }) {
+        function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal, openFuelModal }) {
           return (
             <div className="animate-in fade-in duration-500">
               <div className="flex items-end justify-between mb-6">
@@ -395,6 +451,7 @@
                       saveComment={saveComment}
                       rec={RECOVERY_ROUTINES[workout.rec] || RECOVERY_ROUTINES['A']}
                       jumpToRecovery={jumpToRecovery}
+                      openFuelModal={openFuelModal}
                     />
                   ))}
                 </div>
@@ -451,7 +508,7 @@
           );
         }
 
-        function WorkoutCard({ data, uid, checkedItems, toggleCheck, comments, saveComment, rec, jumpToRecovery }) {
+        function WorkoutCard({ data, uid, checkedItems, toggleCheck, comments, saveComment, rec, jumpToRecovery, openFuelModal }) {
           const colors = {
             'Swim': { head: 'bg-blue-600', text: 'text-blue-400', border: 'border-blue-500/30' },
             'Run': { head: 'bg-emerald-600', text: 'text-emerald-400', border: 'border-emerald-500/30' },
@@ -459,6 +516,7 @@
           }[data.t] || { head: 'bg-slate-600', text: 'text-slate-400', border: 'border-slate-500/30' };
 
           const isCompleted = checkedItems[uid];
+          const fuelTarget = INTRA_FUEL_OPTIONS[data.fl]?.target || '0g/hr';
 
           return (
             <div className={`bg-slate-800 rounded-md overflow-hidden border ${colors.border} shadow-sm`}>
@@ -516,8 +574,11 @@
 
                 {/* Footer Actions */}
                 <div className="flex gap-2 mb-4">
+                  <button onClick={() => openFuelModal(data.fl)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
+                     <Flame size={12} className="text-orange-400"/> Fueling: {fuelTarget}
+                  </button>
                   <button onClick={() => jumpToRecovery(rec.id)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
-                     <Activity size={12}/> {rec.title}
+                     <Activity size={12} className="text-blue-400"/> {rec.title}
                   </button>
                 </div>
 
@@ -693,6 +754,7 @@
                   <GearRow icon={Wind} label="Upper Body" val={data.u} color="blue" />
                   <GearRow icon={Activity} label="Lower Body" val={data.l} color="blue" />
                   <GearRow icon={Thermometer} label="Extremities" val={data.e} color="orange" />
+                  <GearRow icon={Bike} label="Tire Choice" val={data.t} color="green" />
                 </div>
               </div>
             </div>
@@ -700,7 +762,12 @@
         }
 
         function GearRow({ icon: Icon, label, val, color }) {
-          const colorClasses = color === 'blue' ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400';
+          const colorClasses = {
+              'blue': 'bg-blue-500/20 text-blue-400',
+              'orange': 'bg-orange-500/20 text-orange-400',
+              'green': 'bg-green-500/20 text-green-400'
+          }[color] || 'bg-slate-500/20 text-slate-400';
+
           return (
             <div className="flex gap-4 items-start">
               <div className={`${colorClasses} p-2 rounded mt-1`}><Icon className="w-4 h-4" /></div>
