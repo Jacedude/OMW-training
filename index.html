@@ -45,6 +45,7 @@
             return <span dangerouslySetInnerHTML={{ __html: svgHtml }} style={{ display: 'inline-flex' }} />;
         };
 
+        // Icon Mappings
         const CalendarIcon = (p) => <Icon name="Calendar" {...p} />;
         const LayoutDashboard = (p) => <Icon name="LayoutDashboard" {...p} />;
         const Flame = (p) => <Icon name="Flame" {...p} />;
@@ -153,72 +154,72 @@
           "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger", t: "Vittoria Dry (34/36psi)" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze", t: "Pirelli M (26/28psi)" } }
         };
 
-        // --- FULL 9-WEEK SCHEDULE ---
+        // --- FULL 9-WEEK SCHEDULE (RE-VERIFIED) ---
         const WEEKS = {
-          1: { title: "Phase 1: Build", focus: "Stability", days: [
+          1: { title: "Phase 1: Build", focus: "Dec 1 - Dec 7", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "VO2 Intervals", dur: "50m", tss: 70, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["Warmup 10m", "6x800m @ 6:25", "Cooldown 10m"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Threshold Swim", dur: "1h", tss: 60, fl: "Moderate", rec: "D", goal: "Aerobic Power", ex: ["Continuous Laps", "Sustain Threshold"], supps: [] }, { t: "Run", title: "Easy Run", dur: "30m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2 (8:00+)"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo Run (AM)", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Glycogen Deplete", ex: ["20m @ 7:10/mi pace"], supps: [] }, { t: "Bike", title: "Dbl Thresh (PM)", dur: "1h", tss: 75, fl: "High", rec: "C", goal: "Torque", ex: ["3x8m @ 250W"], supps: ["Caffeine", "Nitrates"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "VO2 Max", dur: "1h", tss: 80, fl: "Moderate", rec: "E", goal: "Raise Ceiling", ex: ["5x3m @ 315W"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Low", rec: "B", goal: "Parasympathetic", ex: ["Strict <150W", "Spin"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Low", rec: "B", goal: "Flush", ex: ["Easy Laps"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "C", goal: "Volume", ex: ["Steady State"], supps: [] }, { t: "Bike", title: "Gravel Skills", dur: "2.5h", tss: 130, fl: "High", rec: "A", goal: "Handling", ex: ["Find Mud", "190W Avg"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Trail Run", dur: "1h 10m", tss: 70, fl: "Moderate", rec: "A", goal: "Ankle Stability", ex: ["Trails HR < 145"], supps: [] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo Run (AM)", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Glycogen Deplete", ex: ["20m @ 7:10/mi pace"], supps: [] }, { t: "Bike", title: "Dbl Thresh (PM)", dur: "1h", tss: 75, fl: "High", rec: "C", goal: "Torque", ex: ["3x8m @ 250W"], supps: ["Caffeine"] }] }, // P5 Wed Double
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "VO2 Max", dur: "1h", tss: 80, fl: "High", rec: "C", goal: "Raise Ceiling", ex: ["5x3m @ 315W"], supps: ["Caffeine"] }] }, // P5 Thu
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Low", rec: "B", goal: "Parasympathetic", ex: ["Strict <150W", "Spin"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Low", rec: "B", goal: "Flush", ex: ["Easy Laps"], supps: [] }] }, // P5 Fri (Active Rec + Swim)
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "C", goal: "Volume", ex: ["Steady State"], supps: [] }] }, // P5 Sat
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Trail Run", dur: "1h 10m", tss: 70, fl: "High", rec: "A", goal: "Ankle Stability", ex: ["Trails HR < 145"], supps: [] }, { t: "Bike", title: "Gravel Skills", dur: "2.5h", tss: 130, fl: "High", rec: "A", goal: "Handling", ex: ["Find Mud", "190W Avg"], supps: [] }] } // P5 Sun (Run + Bike)
           ]},
-          2: { title: "Phase 1: Build", focus: "Force Production", days: [
+          2: { title: "Phase 1: Build", focus: "Dec 8 - Dec 14", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Threshold Run", dur: "55m", tss: 75, fl: "Moderate", rec: "B", goal: "Race Pace Lock", ex: ["5x1000m @ 6:40", "2:30 Jog Rest"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Threshold Swim", dur: "1h", tss: 65, fl: "Moderate", rec: "D", goal: "Lactate Clear", ex: ["Threshold Pace"], supps: [] }, { t: "Run", title: "Easy Run", dur: "35m", tss: 35, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Run (AM)", dur: "50m", tss: 65, fl: "High", rec: "C", goal: "Pre-Fatigue", ex: ["25m @ 7:00/mi"], supps: [] }, { t: "Bike", title: "Torque (PM)", dur: "1h", tss: 95, fl: "High", rec: "C", goal: "Muscular Endur", ex: ["3x10m @ 250W", "60 RPM"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Sprints", dur: "1h", tss: 75, fl: "Moderate", rec: "E", goal: "Neuromuscular", ex: ["10x30s MAX"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy Laps"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "1h", tss: 30, fl: "Low", rec: "B", goal: "Reset", ex: ["Strict <150W"], supps: ["Sodium"] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Low", rec: "B", goal: "Flush", ex: ["Easy Laps"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "High", rec: "C", goal: "Volume", ex: ["Steady State"], supps: [] }, { t: "Bike", title: "Long Ride", dur: "3h", tss: 155, fl: "High", rec: "C", goal: "Fatigue Resist", ex: ["3hrs Z2 (190W)"], supps: ["Sodium"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 15m", tss: 75, fl: "Moderate", rec: "A", goal: "Durability", ex: ["Hilly Route"], supps: [] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Run (AM)", dur: "50m", tss: 65, fl: "High", rec: "C", goal: "Pre-Fatigue", ex: ["25m @ 7:00/mi"], supps: [] }, { t: "Bike", title: "Torque (PM)", dur: "1h", tss: 95, fl: "High", rec: "C", goal: "Muscular Endur", ex: ["3x10m @ 250W", "60 RPM"], supps: ["Caffeine"] }] }, // P6 Wed Double
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Sprints", dur: "1h", tss: 75, fl: "Moderate", rec: "E", goal: "Neuromuscular", ex: ["10x30s MAX"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy Laps"], supps: [] }] }, // P6 Thu: Corrected: Added Swim
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "1h", tss: 30, fl: "Low", rec: "B", goal: "Reset", ex: ["Strict <150W"], supps: [] }] }, // P6 Fri: Corrected: Bike Only
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "High", rec: "C", goal: "Volume", ex: ["Steady State"], supps: [] }, { t: "Bike", title: "Long Ride", dur: "3h", tss: 155, fl: "High", rec: "C", goal: "Fatigue Resist", ex: ["3hrs Z2 (190W)"], supps: [] }] }, // P6 Sat Weekend Sim
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 15m", tss: 75, fl: "Moderate", rec: "A", goal: "Durability", ex: ["Hilly Route"], supps: [] }] } // P6 Sun
           ]},
-          3: { title: "Phase 1: Specificity", focus: "VO2 Support", days: [
+          3: { title: "Phase 1: Specificity", focus: "Dec 15 - Dec 21", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Mile Reps", dur: "1h", tss: 80, fl: "Moderate", rec: "B", goal: "VO2 Support", ex: ["3x1600m @ 6:40"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Threshold", dur: "1h", tss: 65, fl: "Moderate", rec: "D", goal: "Threshold", ex: ["Hard Intervals"], supps: [] }, { t: "Run", title: "Easy Run", dur: "40m", tss: 40, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Run (AM)", dur: "50m", tss: 65, fl: "High", rec: "C", goal: "Lactate Shuttle", ex: ["2x15m @ 7:00"], supps: [] }, { t: "Bike", title: "Dbl Thresh (PM)", dur: "1h 15m", tss: 100, fl: "High", rec: "C", goal: "Raise Ceiling", ex: ["2x20m @ 250W"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "VO2 Max", dur: "1h", tss: 85, fl: "Moderate", rec: "E", goal: "Torque", ex: ["6x3m @ 320W"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Low", rec: "B", goal: "Reset", ex: ["Strict <150W"], supps: ["Caffeine"] }, { t: "Swim", title: "Rec Swim", dur: "45m", tss: 30, fl: "Low", rec: "B", goal: "Flush", ex: ["Easy"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "Low", rec: "B", goal: "Volume", ex: ["Swim Early"], supps: [] }, { t: "Bike", title: "Sim 1", dur: "2h 30m", tss: 140, fl: "High", rec: "C", goal: "Torque Endur", ex: ["30m @ 245W", "Gravel"], supps: ["Caffeine", "Nitrates"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 20m", tss: 80, fl: "Moderate", rec: "A", goal: "Base", ex: ["80m Trails"], supps: ["Sodium"] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Run (AM)", dur: "50m", tss: 65, fl: "High", rec: "C", goal: "Lactate Shuttle", ex: ["2x15m @ 7:00"], supps: [] }, { t: "Bike", title: "Dbl Thresh (PM)", dur: "1h 15m", tss: 100, fl: "High", rec: "C", goal: "Raise Ceiling", ex: ["2x20m @ 250W"], supps: [] }] }, // P7 Wed
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "VO2 Max", dur: "1h", tss: 85, fl: "Moderate", rec: "E", goal: "Torque", ex: ["6x3m @ 320W"], supps: ["Caffeine"] }] }, // P7 Thu
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Low", rec: "B", goal: "Reset", ex: ["Strict <150W"], supps: ["Caffeine"] }, { t: "Swim", title: "Rec Swim", dur: "45m", tss: 30, fl: "Low", rec: "B", goal: "Flush", ex: ["Easy"], supps: [] }] }, // P7 Fri
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Volume Swim", dur: "1h", tss: 45, fl: "Low", rec: "B", goal: "Volume", ex: ["Swim Early"], supps: [] }, { t: "Bike", title: "Sim 1", dur: "2h 30m", tss: 140, fl: "High", rec: "C", goal: "Torque Endur", ex: ["30m @ 245W", "Gravel"], supps: ["Caffeine", "Nitrates"] }] }, // P7 Sat
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 20m", tss: 80, fl: "Moderate", rec: "A", goal: "Base", ex: ["80m Trails"], supps: ["Sodium"] }] } // P7 Sun
           ]},
-          4: { title: "Phase 1: Specificity", focus: "Mental Toughness", days: [
+          4: { title: "Phase 1: Specificity", focus: "Dec 22 - Dec 28", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Mile Reps", dur: "1h 5m", tss: 85, fl: "Moderate", rec: "B", goal: "Mental Toughness", ex: ["4x1600m @ 6:40"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Threshold", dur: "1h", tss: 65, fl: "Moderate", rec: "D", goal: "Power", ex: ["Hard Intervals"], supps: [] }, { t: "Run", title: "Easy Run", dur: "40m", tss: 40, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "AM Brick", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Pre-Fatigue", ex: ["45m w/ 30m Tempo"], supps: ["Caffeine"] }, { t: "Bike", title: "Brick (PM)", dur: "1h 30m", tss: 110, fl: "High", rec: "C", goal: "Empty Tank", ex: ["90m w/ 3x15m 250W"], supps: ["Caffeine", "Nitrates"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Rest", title: "TRAVEL", dur: "0m", tss: 0, fl: "Moderate", rec: "B", goal: "Compression", ex: ["Rest", "Hydrate"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Travel Run", dur: "50m", tss: 65, fl: "Low", rec: "B", goal: "Maintenance", ex: ["20m @ 6:50"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 30m", tss: 90, fl: "High", rec: "C", goal: "Volume", ex: ["Hilly Z2"], supps: ["Nitrates"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Rec Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "A", goal: "Offload Legs", ex: ["Aerobic"], supps: [] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "AM Brick", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Pre-Fatigue", ex: ["45m w/ 30m Tempo"], supps: ["Caffeine"] }, { t: "Bike", title: "Brick (PM)", dur: "1h 30m", tss: 110, fl: "High", rec: "C", goal: "Empty Tank", ex: ["90m w/ 3x15m 250W"], supps: ["Caffeine", "Nitrates"] }] }, // P8 Wed
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Rest", title: "TRAVEL", dur: "0m", tss: 0, fl: "Moderate", rec: "B", goal: "Compression", ex: ["Rest", "Hydrate"], supps: [] }] }, // P8 Thu
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Travel Run", dur: "50m", tss: 65, fl: "Low", rec: "B", goal: "Maintenance", ex: ["20m @ 6:50"], supps: ["Caffeine"] }] }, // P8 Fri
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 30m", tss: 90, fl: "High", rec: "C", goal: "Volume", ex: ["Hilly Z2"], supps: ["Nitrates"] }, { t: "Swim", title: "Rec Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "A", goal: "Offload Legs", ex: ["Aerobic"], supps: [] }] }, // P8 Sat
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Rec Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "A", goal: "Offload Legs", ex: ["Aerobic"], supps: [] }] } // P8 Sun
           ]},
-          5: { title: "Phase 1: Travel", focus: "Maintenance", days: [
+          5: { title: "Phase 1: Travel", focus: "Dec 29 - Jan 4", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Best 10k", dur: "1h 10m", tss: 95, fl: "Moderate", rec: "B", goal: "Race Predictor", ex: ["3x2 Miles @ 6:45"], supps: ["Caffeine", "Nitrates"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Mod Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "D", goal: "Recovery", ex: ["Moderate"], supps: [] }, { t: "Run", title: "Easy Run", dur: "30m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Z2 Jog"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Lactate Clear", ex: ["45m w/ 20m Tempo"], supps: ["Caffeine"] }, { t: "Swim", title: "Aquath", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Threshold", ex: ["20x100y"], supps: [] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Lactate Clear", ex: ["45m w/ 20m Tempo"], supps: ["Caffeine"] }, { t: "Swim", title: "Aquath", dur: "45m", tss: 60, fl: "High", rec: "C", goal: "Threshold", ex: ["20x100y"], supps: [] }] }, // P9 Wed
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Rest", title: "TRAVEL", dur: "0m", tss: 0, fl: "Moderate", rec: "B", goal: "Hydrate", ex: ["Rest"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Active", dur: "1h", tss: 45, fl: "Low", rec: "B", goal: "Wake Legs", ex: ["4x1m Spin-ups"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Mod Swim", dur: "1h", tss: 45, fl: "High", rec: "C", goal: "Volume", ex: ["Moderate"], supps: [] }, { t: "Bike", title: "Gravel", dur: "3h 30m", tss: 185, fl: "High", rec: "C", goal: "Equip Check", ex: ["3.5hrs Outdoor"], supps: ["Caffeine", "Nitrates"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Active", dur: "1h", tss: 45, fl: "Low", rec: "B", goal: "Wake Legs", ex: ["4x1m Spin-ups"], supps: [] }] }, // P9 Fri
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Mod Swim", dur: "1h", tss: 45, fl: "High", rec: "C", goal: "Volume", ex: ["Moderate"], supps: [] }, { t: "Bike", title: "Gravel", dur: "3h 30m", tss: 185, fl: "High", rec: "C", goal: "Equip Check", ex: ["3.5hrs Outdoor"], supps: ["Caffeine", "Nitrates"] }] }, // P9 Sat
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Peak Run", dur: "1h 30m", tss: 90, fl: "Moderate", rec: "A", goal: "Durability", ex: ["90m Z2"], supps: [] }] }
           ]},
-          6: { title: "Phase 2: Peak", focus: "Over-Speed", days: [
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Speed", dur: "1h", tss: 85, fl: "Moderate", rec: "D", goal: "Over-Speed", ex: ["5x1200m @ 6:30"], supps: [] }] },
+          6: { title: "Phase 2: Peak", focus: "Jan 5 - Jan 11", days: [
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Speed", dur: "1h", tss: 85, fl: "Moderate", rec: "D", goal: "Over-Speed", ex: ["5x1200m @ 6:30"], supps: ["Caffeine"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Hard Swim", dur: "1h", tss: 65, fl: "Moderate", rec: "D", goal: "Power", ex: ["Threshold"], supps: [] }, { t: "Run", title: "Easy Run", dur: "40m", tss: 40, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Strict Z2"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Pacing", ex: ["20m 10k Pace"], supps: [] }, { t: "Bike", title: "VO2 Max", dur: "1h", tss: 85, fl: "High", rec: "C", goal: "Sharpness", ex: ["8x2m @ 350W"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Moderate", rec: "E", goal: "Reset", ex: ["Strict <150W"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Recovery"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Sim 3", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Race Feel", ex: ["10k Tempo"], supps: ["Caffeine", "Nitrates"] }, { t: "Bike", title: "Sim 3", dur: "2h", tss: 110, fl: "High", rec: "C", goal: "Fatigued Pwr", ex: ["3x10m @ 250W"], supps: ["Sodium"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Rec Run", dur: "45m", tss: 45, fl: "Low", rec: "B", goal: "Recovery", ex: ["Easy Z2"], supps: [] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Tempo", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Pacing", ex: ["20m 10k Pace"], supps: [] }, { t: "Bike", title: "VO2 Max", dur: "1h", tss: 85, fl: "High", rec: "C", goal: "Sharpness", ex: ["8x2m @ 350W"], supps: ["Caffeine"] }] }, // P10 Wed
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "45m", tss: 25, fl: "Moderate", rec: "E", goal: "Reset", ex: ["Strict <150W"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Recovery"], supps: [] }] }, // P10 Thu
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Sim 3", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Race Feel", ex: ["10k Tempo"], supps: ["Caffeine", "Nitrates"] }, { t: "Bike", title: "Sim 3", dur: "2h", tss: 110, fl: "High", rec: "C", goal: "Fatigued Pwr", ex: ["3x10m @ 250W"], supps: ["Sodium"] }] }, // P10 Fri
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Rec Run", dur: "45m", tss: 45, fl: "Low", rec: "B", goal: "Recovery", ex: ["Easy Z2"], supps: [] }] }, // P10 Sat
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Rest", title: "GAP", dur: "0m", tss: 0, fl: "Moderate", rec: "A", goal: "Re-Warm", ex: ["60m Car Routine"], supps: [] }] }
           ]},
-          7: { title: "Phase 2: Peak/Taper", focus: "Sharpness", days: [
+          7: { title: "Phase 2: Peak/Taper", focus: "Jan 12 - Jan 18", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Taper", dur: "50m", tss: 65, fl: "Moderate", rec: "B", goal: "Form Focus", ex: ["6x800m @ 6:40"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Mod Swim", dur: "50m", tss: 40, fl: "Moderate", rec: "D", goal: "Maintain Feel", ex: ["Aerobic"], supps: [] }, { t: "Run", title: "Rec Run", dur: "30m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["30m Z2"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Dbl Taper", dur: "40m", tss: 55, fl: "High", rec: "C", goal: "Engine Check", ex: ["2x10m @ Tempo"], supps: [] }, { t: "Bike", title: "Dbl Taper", dur: "1h", tss: 75, fl: "High", rec: "C", goal: "Tension Check", ex: ["2x10m @ 250W"], supps: ["Caffeine"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Dbl Taper", dur: "40m", tss: 55, fl: "High", rec: "C", goal: "Engine Check", ex: ["2x10m @ Tempo"], supps: [] }, { t: "Bike", title: "Dbl Taper", dur: "1h", tss: 75, fl: "High", rec: "C", goal: "Tension Check", ex: ["2x10m @ 250W"], supps: ["Caffeine"] }] }, // P11 Wed
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 45, fl: "Moderate", rec: "E", goal: "Neuromuscular", ex: ["4x1m Fast Pedal"], supps: [] }, { t: "Swim", title: "Easy Swim", dur: "40m", tss: 30, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "30m", tss: 15, fl: "Low", rec: "B", goal: "Rest", ex: ["Z1 Spin"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "45m", tss: 30, fl: "Moderate", rec: "A", goal: "Feel", ex: ["Easy"], supps: [] }, { t: "Bike", title: "Endur", dur: "2h", tss: 100, fl: "Moderate", rec: "B", goal: "Aerobic Maint", ex: ["2hrs Z2 Steady"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Taper Run", dur: "50m", tss: 50, fl: "Moderate", rec: "B", goal: "Aerobic Maint", ex: ["50m Z2"], supps: [] }] }
           ]},
-          8: { title: "Phase 2: Taper", focus: "Shedding Fatigue", days: [
+          8: { title: "Phase 2: Taper", focus: "Jan 19 - Jan 25", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Sharp", dur: "40m", tss: 55, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["4x400m @ 5k Pace"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "40m", tss: 30, fl: "Moderate", rec: "D", goal: "Recovery", ex: ["Easy"], supps: [] }, { t: "Run", title: "Rec Run", dur: "20m", tss: 20, fl: "Moderate", rec: "D", goal: "Flush", ex: ["20m Z2"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Taper", dur: "30m", tss: 40, fl: "High", rec: "C", goal: "Priming", ex: ["10m @ Tempo"], supps: [] }, { t: "Bike", title: "Taper", dur: "45m", tss: 45, fl: "High", rec: "C", goal: "Priming", ex: ["3x30s Spin-ups"], supps: [] }] },
@@ -227,14 +228,14 @@
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Act Swim", dur: "20m", tss: 15, fl: "Moderate", rec: "B", goal: "Feel", ex: ["Very Easy"], supps: [] }, { t: "Bike", title: "Act Spin", dur: "45m", tss: 35, fl: "Moderate", rec: "B", goal: "Spin", ex: ["45m Easy"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Shakeout", dur: "40m", tss: 40, fl: "High", rec: "A", goal: "Easy", ex: ["40m Z2"], supps: [] }, { t: "Run", title: "Shakeout", dur: "30m", tss: 30, fl: "High", rec: "A", goal: "Shakeout", ex: ["30m Jog"], supps: [] }] }
           ]},
-          9: { title: "Phase 2: Race Week", focus: "Priming", days: [
+          9: { title: "Phase 2: Race Week", focus: "Jan 26 - Feb 1", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Rec Spin", dur: "30m", tss: 15, fl: "Low", rec: "A", goal: "Rest", ex: ["30m Z1 Spin"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "40m", tss: 30, fl: "Moderate", rec: "D", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Strides", dur: "30m", tss: 35, fl: "Moderate", rec: "D", goal: "Activation", ex: ["30m w/ 4x30s"], supps: ["Nitrates"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 35, fl: "High", rec: "C", goal: "Race Priming", ex: ["2x3m @ 245W"], supps: ["Caffeine"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine"], workouts: [{ t: "Bike", title: "Openers", dur: "45m", tss: 35, fl: "High", rec: "C", goal: "Race Priming", ex: ["2x3m @ 245W"], supps: ["Caffeine"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Easy Swim", dur: "30m", tss: 20, fl: "Moderate", rec: "E", goal: "Flush", ex: ["Easy"], supps: [] }, { t: "Run", title: "Jog", dur: "20m", tss: 15, fl: "Moderate", rec: "E", goal: "Shakeout", ex: ["20m Easy"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Load Spin", dur: "20m", tss: 10, fl: "High", rec: "B", goal: "Spin", ex: ["20m Spin", "Load"], supps: ["Sodium"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "OMW 10K", dur: "10K", tss: 100, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 10:00 AM"], supps: ["Caffeine", "Bicarb", "Nitrates"] }, { t: "Rest", title: "GAP", dur: "90m", tss: 0, fl: "High", rec: "A", goal: "Refuel", ex: ["Dry Clothes", "Heat"], supps: [] }, { t: "Bike", title: "OMW 40mi", dur: "40mi", tss: 150, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 12:00 PM"], supps: [] }] }
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Sodium"], workouts: [{ t: "Bike", title: "Load Spin", dur: "20m", tss: 10, fl: "High", rec: "B", goal: "Spin", ex: ["20m Spin", "Load"], supps: ["Sodium"] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Sodium"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine", "Bicarb", "Nitrates"], workouts: [{ t: "Run", title: "OMW 10K", dur: "10K", tss: 100, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 10:00 AM"], supps: ["Caffeine", "Bicarb", "Nitrates"] }, { t: "Rest", title: "GAP", dur: "90m", tss: 0, fl: "High", rec: "A", goal: "Refuel", ex: ["Dry Clothes", "Heat"], supps: [] }, { t: "Bike", title: "OMW 40mi", dur: "40mi", tss: 150, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 12:00 PM"], supps: [] }] }
           ]}
         };
 
@@ -365,7 +366,7 @@
                 <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
                   <div className="hidden lg:block mb-8">
                     <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
-                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V2.9</div>
+                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V3.2</div>
                   </div>
                   <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                   <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
@@ -473,7 +474,7 @@
                    <div className="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded-sm inline-block font-bold uppercase mb-2">
                      Week {week} • {weekData.title}
                    </div>
-                   <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus.toUpperCase()}</h2>
+                   <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus}</h2>
                    <div className="text-sm text-slate-400 mt-1 font-mono">{dateString}</div>
                 </div>
               </div>
