@@ -68,6 +68,7 @@
         const MessageSquare = (p) => <Icon name="MessageSquare" {...p} />;
         const Pill = (p) => <Icon name="Pill" {...p} />;
         const Bike = (p) => <Icon name="Bike" {...p} />;
+        const Waves = (p) => <Icon name="Waves" {...p} />;
 
         const SUPPLEMENT_INFO = {
           "Creatine": { type: "Daily", title: "Creatine Monohydrate", dose: "5g Daily (Post)", why: "Critical for high-torque gravel surges. Acts as a larger battery for sprinting." },
@@ -116,9 +117,36 @@
         };
 
         const FLUX_DATA = {
-          'High': { color: 'green', desc: "PERFORMANCE. High carbs. No deficit.", b: "Oats + Banana + Syrup", l: "Rice Bowl + Chicken", d: "Pasta + Lean Beef", pre: "45g Carbs (Gel)", intra: "100g Carb/hr" },
-          'Moderate': { color: 'yellow', desc: "MAINTENANCE. Fuel the work.", b: "Yogurt + Berries", l: "Quinoa + Chicken", d: "Steak + Potato", pre: "Banana", intra: "50g Carb/hr" },
-          'Low': { color: 'red', desc: "FAT LOSS. High protein, low starch.", b: "Veggie Omelet", l: "Salad + Tuna", d: "White Fish + Asparagus", pre: "Black Coffee", intra: "Water Only" }
+          'High': { 
+              color: 'green', 
+              desc: "PERFORMANCE. High carbs. No deficit.", 
+              preSwim: "Banana + Blank's Custom Mix (75g Carb)",
+              b: "Oats + Banana + Syrup", 
+              l: "Rice Bowl + Chicken", 
+              d: "Pasta + Lean Beef", 
+              pre: "45g Carbs (Gel)", 
+              intra: "100g Carb/hr" 
+          },
+          'Moderate': { 
+              color: 'yellow', 
+              desc: "MAINTENANCE. Fuel the work.", 
+              preSwim: "Banana OR Toast",
+              b: "Yogurt + Berries", 
+              l: "Quinoa + Chicken", 
+              d: "Steak + Potato", 
+              pre: "Banana", 
+              intra: "50g Carb/hr" 
+          },
+          'Low': { 
+              color: 'red', 
+              desc: "FAT LOSS. High protein, low starch.", 
+              preSwim: "Water / Coffee",
+              b: "Veggie Omelet", 
+              l: "Salad + Tuna", 
+              d: "White Fish + Asparagus", 
+              pre: "Black Coffee", 
+              intra: "Water Only" 
+          }
         };
 
         const GEAR_MATRIX = {
@@ -129,7 +157,6 @@
         };
 
         // --- FULL 9-WEEK SCHEDULE ---
-        // Stack separated: Daily in 'stack', Acute in 'supps'
         const WEEKS = {
           1: { title: "Phase 1: Build", focus: "Stability", days: [
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "VO2 Intervals", dur: "50m", tss: 70, fl: "Moderate", rec: "B", goal: "Leg Speed", ex: ["Warmup 10m", "6x800m @ 6:25", "Cooldown 10m"], supps: [] }] },
@@ -164,7 +191,7 @@
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "AM Brick", dur: "45m", tss: 65, fl: "High", rec: "C", goal: "Pre-Fatigue", ex: ["45m w/ 30m Tempo"], supps: [] }, { t: "Bike", title: "Brick (PM)", dur: "1h 30m", tss: 110, fl: "High", rec: "C", goal: "Empty Tank", ex: ["90m w/ 3x15m 250W"], supps: ["Caffeine"] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Rest", title: "TRAVEL", dur: "0m", tss: 0, fl: "Moderate", rec: "B", goal: "Compression", ex: ["Rest", "Hydrate"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Travel Run", dur: "50m", tss: 65, fl: "Low", rec: "B", goal: "Maintenance", ex: ["20m @ 6:50"], supps: ["Caffeine"] }] },
-              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 30m", tss: 90, fl: "High", rec: "C", goal: "Volume", ex: ["Hilly Z2"], supps: [] }] },
+              { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Run", title: "Long Run", dur: "1h 30m", tss: 90, fl: "High", rec: "C", goal: "Volume", ex: ["Hilly Z2"], supps: [] }, { t: "Swim", title: "Rec Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "A", goal: "Offload Legs", ex: ["Aerobic"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2"], workouts: [{ t: "Swim", title: "Rec Swim", dur: "1h", tss: 45, fl: "Moderate", rec: "A", goal: "Offload Legs", ex: ["Aerobic"], supps: [] }] }
           ]},
           5: { title: "Phase 1: Travel", focus: "Maintenance", days: [
@@ -212,6 +239,22 @@
               { stack: ["Creatine", "Beta-Ala", "D3+K2", "Sodium"], workouts: [{ t: "Bike", title: "Act Spin", dur: "15m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["15m Spin"], supps: ["Sodium"] }, { t: "Run", title: "Act Jog", dur: "10m", tss: 10, fl: "High", rec: "B", goal: "Checks", ex: ["10m Jog"], supps: [] }] },
               { stack: ["Creatine", "Beta-Ala", "D3+K2", "Caffeine", "Bicarb", "Nitrates"], workouts: [{ t: "Run", title: "OMW 10K", dur: "10K", tss: 100, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 10:00 AM"], supps: ["Caffeine", "Bicarb", "Nitrates"] }, { t: "Rest", title: "GAP", dur: "90m", tss: 0, fl: "High", rec: "A", goal: "Refuel", ex: ["Dry Clothes", "Heat"], supps: ["Carbs"] }, { t: "Bike", title: "OMW 40mi", dur: "40mi", tss: 150, fl: "High", rec: "A", goal: "EXECUTE", ex: ["Start 12:00 PM"], supps: [] }] }
           ]}
+        };
+
+        // --- HELPER FUNCTIONS ---
+        const getWorkoutDate = (week, dayIndex) => {
+            // Week 1 starts Dec 1, 2025
+            const startDate = new Date(2025, 11, 1); // Month is 0-indexed: 11 = Dec
+            const dayOffset = (week - 1) * 7 + dayIndex;
+            const targetDate = new Date(startDate);
+            targetDate.setDate(startDate.getDate() + dayOffset);
+            return targetDate;
+        };
+
+        const formatDate = (date) => {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
         };
 
         // --- MAIN APP ---
@@ -325,12 +368,12 @@
                 <div className="flex lg:flex-col justify-around lg:justify-start h-full p-2 lg:p-6 gap-2">
                   <div className="hidden lg:block mb-8">
                     <h1 className="text-2xl font-black italic text-white tracking-tighter">OMW <span className="text-blue-500">2026</span></h1>
-                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V2.0</div>
+                    <div className="text-xs text-slate-500 font-mono mt-1">ATHLETE PROTOCOL V2.2</div>
                   </div>
                   <NavButton id="dashboard" icon={LayoutDashboard} label="DASHBOARD" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                   <NavButton id="calendar" icon={CalendarIcon} label="CALENDAR" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
                   <NavButton id="fuel" icon={Flame} label="FUEL" active={activeTab === 'fuel'} onClick={() => setActiveTab('fuel')} />
-                  <NavButton id="supplements" icon={Pill} label="STACK" active={activeTab === 'supplements'} onClick={() => setActiveTab('supplements')} />
+                  <NavButton id="supplements" icon={Pill} label="SUPPLEMENTS" active={activeTab === 'supplements'} onClick={() => setActiveTab('supplements')} />
                   <NavButton id="recovery" icon={Activity} label="RECOVERY" active={activeTab === 'recovery'} onClick={() => setActiveTab('recovery')} />
                   <NavButton id="gear" icon={Settings} label="GEAR" active={activeTab === 'gear'} onClick={() => setActiveTab('gear')} />
                 </div>
@@ -382,25 +425,37 @@
               </div>
               <div className="space-y-2">
                 {Object.entries(WEEKS).map(([wNum, data]) => (
-                  <div key={wNum} className="grid grid-cols-8 gap-2 items-center">
-                    <div className="text-left pl-2 text-xs font-bold text-slate-400">W{wNum}</div>
+                  <div key={wNum} className="grid grid-cols-8 gap-2 items-start">
+                    <div className="text-left pl-2 text-xs font-bold text-slate-400 pt-2">W{wNum}</div>
                     {data.days.map((d, i) => {
-                      const mainType = d.workouts[0]?.t || "Rest";
-                      const isDouble = d.workouts.length > 1;
-                      let bgClass = "bg-slate-800 border-slate-700 text-slate-500";
-                      let text = "";
-                      if (mainType === "Run") { bgClass = "bg-emerald-900/40 border-emerald-500/30 text-emerald-400"; text = "RUN"; }
-                      else if (mainType === "Swim") { bgClass = "bg-blue-900/40 border-blue-500/30 text-blue-400"; text = "SWIM"; }
-                      else if (mainType === "Bike") { bgClass = "bg-orange-900/40 border-orange-500/30 text-orange-400"; text = "BIKE"; }
-                      else if (mainType === "Rest") { bgClass = "bg-slate-800 border-slate-700 text-slate-600"; text = "REST"; }
-                      if (isDouble) { text = "DBL"; bgClass = "bg-purple-900/40 border-purple-500/30 text-purple-300"; }
-                      if (mainType === "Rest") text = "REST";
-                      
-                      return (
-                        <button key={i} onClick={() => goToDay(parseInt(wNum), i)} className={`h-10 rounded-sm border flex items-center justify-center text-[10px] font-bold transition-all hover:scale-105 hover:brightness-110 ${bgClass}`}>
-                          {text}
-                        </button>
-                      );
+                        // Calculate day of month
+                        const date = getWorkoutDate(parseInt(wNum), i);
+                        const dateNum = date.getDate();
+
+                        return (
+                            <div 
+                              key={i} 
+                              onClick={() => goToDay(parseInt(wNum), i)}
+                              className="min-h-[60px] bg-slate-800 border border-slate-700 rounded-sm p-1 cursor-pointer hover:border-blue-500 hover:bg-slate-700 transition-all flex flex-col gap-1 relative"
+                            >
+                              <div className="absolute top-0.5 right-1 text-[8px] text-slate-500 font-mono">{dateNum}</div>
+                              {d.workouts.length > 0 ? d.workouts.map((w, idx) => {
+                                  let bgClass = "bg-slate-700 text-slate-400";
+                                  if (w.t === "Run") bgClass = "bg-emerald-900/50 text-emerald-400 border border-emerald-500/20";
+                                  if (w.t === "Swim") bgClass = "bg-blue-900/50 text-blue-400 border border-blue-500/20";
+                                  if (w.t === "Bike") bgClass = "bg-orange-900/50 text-orange-400 border border-orange-500/20";
+                                  if (w.t === "Rest") bgClass = "bg-slate-700/50 text-slate-500";
+                                  
+                                  return (
+                                    <div key={idx} className={`text-[8px] leading-tight p-1 rounded-sm font-bold truncate mt-2 ${bgClass}`}>
+                                      {w.title}
+                                    </div>
+                                  );
+                              }) : (
+                                  <div className="text-[8px] text-slate-600 p-1 text-center mt-3">REST</div>
+                              )}
+                            </div>
+                        );
                     })}
                   </div>
                 ))}
@@ -410,6 +465,10 @@
         }
 
         function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal, openFuelModal }) {
+          
+          const currentDate = getWorkoutDate(week, day);
+          const dateString = formatDate(currentDate);
+
           return (
             <div className="animate-in fade-in duration-500">
               <div className="flex items-end justify-between mb-6">
@@ -418,6 +477,7 @@
                      Week {week} • {weekData.title}
                    </div>
                    <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus.toUpperCase()}</h2>
+                   <div className="text-sm text-slate-400 mt-1 font-mono">{dateString}</div>
                 </div>
               </div>
 
@@ -641,9 +701,16 @@
         }
 
         function FuelView({ weekData, dayData }) {
-          const workout = dayData.workouts[0] || { fl: 'Moderate' };
-          const currentFlux = workout.fl;
-          const data = FLUX_DATA[currentFlux] || FLUX_DATA['Moderate'];
+          // Initialize activeFlux with the day's flux, or default to Moderate
+          const defaultFlux = dayData?.workouts?.[0]?.fl || 'Moderate';
+          const [activeFlux, setActiveFlux] = useState(defaultFlux);
+
+          // Update local state when day/week changes
+          useEffect(() => {
+              setActiveFlux(defaultFlux);
+          }, [defaultFlux]);
+
+          const data = FLUX_DATA[activeFlux];
           const colors = {
             'green': { bg: 'bg-emerald-900/20', border: 'border-emerald-500/50', icon: 'text-emerald-400' },
             'yellow': { bg: 'bg-yellow-900/20', border: 'border-yellow-500/50', icon: 'text-yellow-400' },
@@ -652,16 +719,30 @@
 
           return (
             <div className="animate-in fade-in space-y-6">
+              {/* Flux Selector Tabs */}
+              <div className="flex bg-slate-800 p-1 rounded-md border border-slate-700">
+                  {['High', 'Moderate', 'Low'].map(flux => (
+                      <button 
+                          key={flux}
+                          onClick={() => setActiveFlux(flux)}
+                          className={`flex-1 py-2 text-xs font-bold uppercase rounded-sm transition-all ${activeFlux === flux ? 'bg-slate-600 text-white shadow' : 'text-slate-500 hover:text-slate-300'}`}
+                      >
+                          {flux} Flux
+                      </button>
+                  ))}
+              </div>
+
               <div className={`p-6 rounded-md border ${colors.bg} ${colors.border}`}>
                 <div className="flex items-center gap-3 mb-2">
                   <Flame className={`${colors.icon} w-6 h-6`} />
-                  <h2 className="text-2xl font-bold text-white">{currentFlux} Flux</h2>
+                  <h2 className="text-2xl font-bold text-white">{activeFlux} Flux</h2>
                 </div>
                 <p className="text-slate-300 text-sm leading-relaxed">{data.desc}</p>
               </div>
               <div className="bg-slate-800 rounded-md overflow-hidden border border-slate-700">
                 <div className="bg-slate-900 p-4 border-b border-slate-700 font-bold text-white text-xs uppercase tracking-wider">Daily Protocol</div>
                 <div className="divide-y divide-slate-700">
+                  <FuelRow icon={Waves} label="Pre-Swim" val={data.preSwim} />
                   <FuelRow icon={Coffee} label="Breakfast" val={data.b} />
                   <FuelRow icon={Utensils} label="Lunch" val={data.l} />
                   <FuelRow icon={Zap} label="Pre-Workout" val={data.pre} />
