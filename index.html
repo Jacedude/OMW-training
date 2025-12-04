@@ -102,6 +102,7 @@
         const Bike = (p) => <Icon name="Bike" {...p} />;
         const Waves = (p) => <Icon name="Waves" {...p} />;
         const Save = (p) => <Icon name="Save" {...p} />;
+        const RefreshCcw = (p) => <Icon name="RefreshCcw" {...p} />;
 
         // --- CONSTANTS & DATA (SAME AS BEFORE) ---
         const SUPPLEMENT_INFO = {
@@ -135,10 +136,97 @@
         };
 
         const GEAR_MATRIX = {
-          "10-20F": { "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot", t: "Pirelli M (23/25psi)" }, "Wet": { u: "ADD: Hardshell Jacket", l: "ADD: Rain Trousers", e: "Neoprene Gloves / Vapor Socks", t: "Pirelli M (22/24psi)" } },
-          "20-30F": { "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock", t: "Vittoria Dry (32/34psi)" }, "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves / Tape Vents", t: "Pirelli M (24/26psi)" } },
-          "30-40F": { "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers", t: "Vittoria Dry (33/35psi)" }, "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie", t: "Pirelli M (25/27psi)" } },
-          "40-50F": { "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger", t: "Vittoria Dry (34/36psi)" }, "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze", t: "Pirelli M (26/28psi)" } }
+  "10-20F": {
+    "Bike": {
+      "Dry": { u: "Mesh + Merino + Perfetto + Vest", l: "Sorpasso + Wind Brief", e: "Lobster Claws / Winter Boot", t: "Pirelli M (23/25psi)", w: "ADD: Hardshell Jkt + Goggles" },
+      "Wet": { u: "Hardshell Jkt + Rain Trousers", l: "Rain Trousers", e: "Neoprene Gloves / Vapor Socks", t: "Pirelli M (22/24psi)", w: "ADD: Bar Mitts (Pogies)" }
+    },
+    "Run": {
+      "Dry": { u: "Merino Base + Wind Shell", l: "Thermal Tights + Briefs", e: "Mittens / Wool Hat", f: "Gore-Tex Trail Shoe", w: "ADD: Facemask + Wind Briefs" },
+      "Wet": { u: "Base + Waterproof Jkt", l: "Rain Pants", e: "Waterproof Mitten / Cap", f: "Gore-Tex + Wool Sock", w: "ADD: Ski Goggles" }
+    }
+  },
+  "20-30F": {
+    "Bike": {
+      "Dry": { u: "Merino Base + Perfetto", l: "Sorpasso Tights", e: "Lobster Claws / Wool Sock", t: "Vittoria Dry (32/34psi)", w: "ADD: Wind Vest over Perfetto" },
+      "Wet": { u: "Perfetto + Rain Shell", l: "Sorpasso (DWR)", e: "Neoprene Gloves", t: "Pirelli M (24/26psi)", w: "ADD: Velotoze + Helmet Cover" }
+    },
+    "Run": {
+      "Dry": { u: "Synth LS + Vest", l: "Thermal Tights", e: "Light Gloves / Headband", f: "Standard Trail Shoe", w: "SWAP: Full Wind Jacket" },
+      "Wet": { u: "Synth LS + Rain Shell", l: "Tights + Shell Short", e: "Waterproof Glove / Hat", f: "Gore-Tex Shoe", w: "ADD: Brimmed Hat" }
+    }
+  },
+  "30-40F": {
+    "Bike": {
+      "Dry": { u: "Synth Base + Perfetto", l: "Sorpasso Tights", e: "Windproof Glove / Toe Covers", t: "Vittoria Dry (33/35psi)", w: "ADD: Ear Cover + Vest" },
+      "Wet": { u: "Perfetto + Rain Vest", l: "Sorpasso + Ass Saver", e: "RoS Glove / Neoprene Bootie", t: "Pirelli M (25/27psi)", w: "SWAP: Full Rain Jacket" }
+    },
+    "Run": {
+      "Dry": { u: "LS Tech Tee", l: "Light Tights", e: "ciThin Gloves", f: "Standard Shoe", w: "ADD: Wind Vest + Briefs" },
+      "Wet": { u: "LS Tee + Rain Vest", l: "Tights", e: "Cap", f: "Wool Socks", w: "SWAP: Full Rain Jacket" }
+    }
+  },
+  "40-50F": {
+    "Bike": {
+      "Dry": { u: "Summer Base + Perfetto", l: "Sorpasso OR Bibs", e: "Light Full Finger", t: "Vittoria Dry (34/36psi)", w: "ADD: Vest (Core Warmth)" },
+      "Wet": { u: "Perfetto (Closed Vents)", l: "Sorpasso (Nano Flex)", e: "Neoprene / Velotoze", t: "Pirelli M (26/28psi)", w: "ADD: Helmet Cover" }
+    },
+    "Run": {
+      "Dry": { u: "Short Sleeve + Arm Warmers", l: "Shorts", e: "None", f: "Standard Shoe", w: "ADD: Gilet / Vest" },
+      "Wet": { u: "Long Sleeve + Cap", l: "Shorts", e: "Light Gloves", f: "Standard Shoe", w: "ADD: Light Shell Jkt" }
+    }
+  },
+  "50-60F": {
+    "Bike": {
+      "Dry": { u: "Jersey + Arm Warmers", l: "Bibs + Knee Warmers", e: "Fingerless Gloves", t: "Slicks (40psi)", w: "ADD: Wind Vest (Pocket)" },
+      "Wet": { u: "Jersey + Rain Jacket", l: "Bibs + Embro", e: "Light Full Finger", t: "Mixed (38psi)", w: "NOTE: Zip Vents Closed" }
+    },
+    "Run": {
+      "Dry": { u: "Singlet / T-Shirt", l: "Split Shorts", e: "Sunglasses", f: "Race Shoe", w: "None" },
+      "Wet": { u: "T-Shirt + Cap", l: "Split Shorts", e: "Anti-Chafe Balm", f: "Standard Shoe", w: "ADD: Tight Layer (Flap)" }
+    }
+  },
+  "60-70F": {
+    "Bike": {
+      "Dry": { u: "Summer Jersey", l: "Bib Shorts", e: "Fingerless Gloves", t: "Slicks (42psi)", w: "SWAP: Shallow Front Wheel" },
+      "Wet": { u: "Jersey + Rain Vest", l: "Bibs", e: "Cap", t: "Mixed (38psi)", w: "SWAP: Full Rain Jacket" }
+    },
+    "Run": {
+      "Dry": { u: "Singlet", l: "Split Shorts", e: "Visor", f: "Race Shoe", w: "None" },
+      "Wet": { u: "Singlet", l: "Split Shorts", e: "Visor", f: "Drainable Shoe", w: "None" }
+    }
+  },
+  "70-80F": {
+    "Bike": {
+      "Dry": { u: "Aero Jersey (Mesh)", l: "Aero Bibs", e: "Sun Sleeves", t: "Slicks (45psi)", w: "SWAP: Box Rim Wheel" },
+      "Wet": { u: "Summer Jersey", l: "Bibs", e: "None", t: "Mixed (40psi)", w: "None" }
+    },
+    "Run": {
+      "Dry": { u: "Singlet / Shirtless", l: "Short Shorts", e: "Ice Bandana", f: "Race Shoe", w: "ADD: Body Glide" },
+      "Wet": { u: "Singlet", l: "Short Shorts", e: "Anti-Chafe", f: "Race Shoe", w: "None" }
+    }
+  },
+  "80-90F": {
+    "Bike": {
+      "Dry": { u: "Climber's Jersey", l: "Lightweight Bibs", e: "Sunscreen", t: "Slicks", w: "Hydration: +1 Bottle/hr" },
+      "Wet": { u: "Mesh Jersey", l: "Bibs", e: "None", t: "Slicks", w: "None" }
+    },
+    "Run": {
+      "Dry": { u: "Shirtless / Mesh", l: "Shorts", e: "Handheld Water", f: "Vented Shoe", w: "ADD: Visor (Hair Control)" },
+      "Wet": { u: "Singlet", l: "Shorts", e: "Anti-Chafe", f: "Vented Shoe", w: "None" }
+    }
+  },
+  "90F+": {
+    "Bike": {
+      "Dry": { u: "Mesh Only / Wet Jersey", l: "Lightweight Bibs", e: "Ice Sock", t: "Slicks", w: "Alert: Salt Accumulation" },
+      "Wet": { u: "Mesh Jersey", l: "Bibs", e: "None", t: "Slicks", w: "None" }
+    },
+    "Run": {
+      "Dry": { u: "Shirtless", l: "Shorts", e: "Ice Hat / Pre-Cooling", f: "Vented Shoe", w: "Alert: High Evaporation" },
+      "Wet": { u: "Singlet", l: "Shorts", e: "Anti-Chafe", f: "Vented Shoe", w: "None" }
+    }
+  }
+};
         };
 
         // --- FULL 9-WEEK SCHEDULE ---
@@ -856,37 +944,203 @@
         }
 
         function GearView({ temp, setTemp, cond, setCond }) {
-          const data = GEAR_MATRIX[temp][cond];
-          const temps = Object.keys(GEAR_MATRIX);
-          return (
-            <div className="animate-in fade-in space-y-6">
-              <div className="bg-slate-800 p-6 rounded-md border border-slate-700">
-                <h2 className="text-2xl font-bold text-white mb-6">Gear Calculator</h2>
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div>
-                    <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Temp</label>
-                    <select value={temp} onChange={(e) => setTemp(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
-                      {temps.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-slate-500 uppercase font-bold mb-2 block">Condition</label>
-                    <select value={cond} onChange={(e) => setCond(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-white rounded-md p-3 text-sm outline-none">
-                      <option value="Dry">Dry</option>
-                      <option value="Wet">Wet / Snow</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="bg-slate-900 rounded-md p-5 border border-slate-700 space-y-5">
-                  <GearRow icon={Wind} label="Upper Body" val={data.u} color="blue" />
-                  <GearRow icon={Activity} label="Lower Body" val={data.l} color="blue" />
-                  <GearRow icon={Thermometer} label="Extremities" val={data.e} color="orange" />
-                  <GearRow icon={Bike} label="Tire Choice" val={data.t} color="green" />
-                </div>
-              </div>
-            </div>
-          );
+    const [sport, setSport] = useState("Bike");
+    const [wind, setWind] = useState("Low");
+    const [loading, setLoading] = useState(false);
+    const [weatherData, setWeatherData] = useState(null);
+    const [manualOverride, setManualOverride] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(""); // State for user input
+
+    // HELPER: Map Numeric Temp to Range Key
+    const getRange = (t) => {
+        if (t < 20) return "10-20F";
+        if (t < 30) return "20-30F";
+        if (t < 40) return "30-40F";
+        if (t < 50) return "40-50F";
+        if (t < 60) return "50-60F";
+        if (t < 70) return "60-70F";
+        if (t < 80) return "70-80F";
+        if (t < 90) return "80-90F";
+        return "90F+";
+    };
+
+    // WEATHER FETCH
+    // Now accepts an optional 'location' argument
+    const fetchWeather = async (customLoc = null) => {
+        setLoading(true);
+        try {
+            const API_KEY = "e6e30061e88941706692996162383236"; // Demo Key
+            
+            let url;
+            if (customLoc) {
+                // User Search Mode
+                url = `https://api.openweathermap.org/data/2.5/weather?q=${customLoc}&units=imperial&appid=${API_KEY}`;
+            } else {
+                // Default Race Mode (Boulder Lat/Lon)
+                const lat = "40.0150";
+                const lon = "-105.2705";
+                url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
+            }
+            
+            const res = await fetch(url);
+            
+            if (!res.ok) throw new Error("Location not found");
+
+            const data = await res.json();
+
+            if (data.main) {
+                // 1. Set Temp Range
+                const currentTemp = data.main.temp;
+                const range = getRange(currentTemp);
+                setTemp(range);
+
+                // 2. Set Condition (Codes 2xx-6xx are Rain/Snow)
+                const isWet = data.weather.some(w => w.id < 700);
+                setCond(isWet ? "Wet" : "Dry");
+
+                // 3. Set Wind (> 15mph is High)
+                setWind(data.wind.speed > 15 ? "High" : "Low");
+
+                setWeatherData({
+                    temp: Math.round(currentTemp),
+                    desc: data.weather[0].description,
+                    wind: Math.round(data.wind.speed),
+                    loc: data.name
+                });
+                setManualOverride(false);
+                setSearchQuery(""); // Clear input on success
+            }
+        } catch (e) {
+            console.error("Weather Fetch Failed", e);
+            alert("Could not find that location. Please try 'City' or 'City, State'");
         }
+        setLoading(false);
+    };
+
+    // Fetch Boulder on mount
+    useEffect(() => {
+        fetchWeather();
+    }, []);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            fetchWeather(searchQuery);
+        }
+    };
+
+    // Handle Manual Overrides
+    const handleOverride = (setter, val) => {
+        setter(val);
+        setManualOverride(true);
+    };
+
+    // Safe Data Access
+    const safeTemp = GEAR_MATRIX[temp] ? temp : "30-40F";
+    const safeSport = GEAR_MATRIX[safeTemp][sport] ? sport : "Bike";
+    const safeCond = GEAR_MATRIX[safeTemp][safeSport][cond] ? cond : "Dry";
+    
+    // Get Base Gear + Wind Modifier
+    const gearSet = GEAR_MATRIX[safeTemp][safeSport][safeCond];
+    const windMod = (wind === "High" && gearSet.w) ? gearSet.w : null;
+
+    return (
+        <div className="animate-in fade-in space-y-6">
+            <div className="bg-slate-800 p-6 rounded-md border border-slate-700">
+                
+                {/* HEADER & SEARCH */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
+                    <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                            Gear Calculator
+                            {manualOverride && <span className="text-[10px] bg-yellow-900/50 text-yellow-500 px-2 py-0.5 rounded border border-yellow-700/50">MANUAL OVERRIDE</span>}
+                        </h2>
+                        
+                        {/* Live Weather Display */}
+                        {weatherData ? (
+                            <div className="flex items-center gap-3 mt-2 text-sm bg-slate-900/50 p-2 rounded-md border border-slate-700/50 inline-flex">
+                                <span className="text-blue-400 font-bold uppercase">{weatherData.loc}</span> 
+                                <span className="text-white font-mono font-bold">{weatherData.temp}°F</span>
+                                <span className="text-slate-400 capitalize">{weatherData.desc}</span>
+                                <span className={`font-bold ${weatherData.wind > 15 ? 'text-red-400' : 'text-slate-500'}`}>Wind {weatherData.wind}mph</span>
+                            </div>
+                        ) : (
+                            <p className="text-slate-400 text-sm mt-1">Weather data unavailable</p>
+                        )}
+                    </div>
+
+                    {/* Search Form */}
+                    <form onSubmit={handleSearch} className="flex gap-2 w-full lg:w-auto">
+                        <input 
+                            type="text" 
+                            placeholder="Enter City (e.g. Centennial)" 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="bg-slate-900 border border-slate-700 text-white text-xs p-2 rounded w-full focus:outline-none focus:border-blue-500"
+                        />
+                        <button type="submit" disabled={loading} className="px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white text-xs font-bold rounded transition-colors whitespace-nowrap">
+                            {loading ? "..." : "SEARCH"}
+                        </button>
+                        <button type="button" onClick={() => fetchWeather()} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 text-xs font-bold rounded transition-colors whitespace-nowrap" title="Reset to Race Location">
+                           <RefreshCcw size={14} />
+                        </button>
+                    </form>
+                </div>
+
+                {/* CONTROLS GRID */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    {/* SPORT */}
+                    <div className="bg-slate-900 p-1 rounded border border-slate-700 flex">
+                        <button onClick={() => setSport("Bike")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${sport === 'Bike' ? 'bg-slate-700 text-white shadow' : 'text-slate-500'}`}>BIKE</button>
+                        <button onClick={() => setSport("Run")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${sport === 'Run' ? 'bg-emerald-900/50 text-emerald-400 shadow' : 'text-slate-500'}`}>RUN</button>
+                    </div>
+
+                    {/* TEMP */}
+                    <select value={temp} onChange={(e) => handleOverride(setTemp, e.target.value)} className="bg-slate-900 border border-slate-700 text-white rounded p-2 text-xs font-bold outline-none">
+                        {Object.keys(GEAR_MATRIX).map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+
+                    {/* CONDITION */}
+                    <div className="bg-slate-900 p-1 rounded border border-slate-700 flex">
+                        <button onClick={() => handleOverride(setCond, "Dry")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${cond === 'Dry' ? 'bg-slate-700 text-yellow-500 shadow' : 'text-slate-500'}`}>DRY</button>
+                        <button onClick={() => handleOverride(setCond, "Wet")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${cond === 'Wet' ? 'bg-blue-900/50 text-blue-400 shadow' : 'text-slate-500'}`}>WET</button>
+                    </div>
+
+                    {/* WIND */}
+                    <div className="bg-slate-900 p-1 rounded border border-slate-700 flex">
+                        <button onClick={() => handleOverride(setWind, "Low")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${wind === 'Low' ? 'bg-slate-700 text-slate-300 shadow' : 'text-slate-500'}`}>CALM</button>
+                        <button onClick={() => handleOverride(setWind, "High")} className={`flex-1 rounded-sm text-xs font-bold transition-all ${wind === 'High' ? 'bg-red-900/50 text-red-400 shadow' : 'text-slate-500'}`}>WINDY</button>
+                    </div>
+                </div>
+
+                {/* RESULTS */}
+                <div className="space-y-4">
+                    {/* WIND ALERT */}
+                    {windMod && (
+                        <div className="bg-red-900/20 border border-red-500/30 p-3 rounded flex items-start gap-3 animate-in slide-in-from-top-2">
+                            <Wind className="text-red-400 w-5 h-5 mt-0.5" />
+                            <div>
+                                <div className="text-red-400 text-xs font-bold uppercase mb-1">High Wind Warning</div>
+                                <div className="text-slate-200 text-sm font-medium">{windMod}</div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="bg-slate-900 rounded-md p-5 border border-slate-700 space-y-5">
+                        <GearRow icon={Wind} label="Upper Body" val={gearSet.u} color="blue" />
+                        <GearRow icon={Activity} label="Lower Body" val={gearSet.l} color="blue" />
+                        <GearRow icon={Thermometer} label="Extremities" val={gearSet.e} color="orange" />
+                        {sport === 'Bike' ? (
+                            <GearRow icon={Bike} label="Tire Choice" val={gearSet.t} color="green" />
+                        ) : (
+                            <GearRow icon={Waves} label="Footwear" val={gearSet.f} color="green" />
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
         function GearRow({ icon: Icon, label, val, color }) {
           const colorClasses = {
