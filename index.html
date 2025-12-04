@@ -1024,7 +1024,12 @@ const fetchWeather = async (customLoc = null) => {
             fetchWeather(searchQuery);
         }
     };
-            
+
+    const handleOverride = (setter, val) => {
+        setter(val);
+        setManualOverride(true);
+    };
+     
     // Safe Data Access
     const safeTemp = GEAR_MATRIX[temp] ? temp : "30-40F";
     const safeSport = GEAR_MATRIX[safeTemp][sport] ? sport : "Bike";
