@@ -245,8 +245,38 @@
         // --- MAIN APP ---
         function TrainingApp() {
           const [activeTab, setActiveTab] = useState('dashboard');
-          const [week, setWeek] = useState(1);
-          const [day, setDay] = useState(0); 
+          const [week, setWeek] = useState(() => {
+        const now = new Date();
+        const start = new Date(2025, 11, 1); // Dec 1, 2025
+    
+        // Reset time to midnight for accurate day calculation
+        now.setHours(0,0,0,0);
+        start.setHours(0,0,0,0);
+    
+        const diffTime = now - start;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) return 1; // Before start date, default to Week 1
+        if (diffDays >= 63) return 9; // After end date, stay on Week 9
+    
+        return Math.floor(diffDays / 7) + 1;
+});
+
+    const [day, setDay] = useState(() => {
+        const now = new Date();
+        const start = new Date(2025, 11, 1);
+    
+        now.setHours(0,0,0,0);
+        start.setHours(0,0,0,0);
+    
+        const diffTime = now - start;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) return 0; // Monday
+        if (diffDays >= 63) return 6; // Sunday
+    
+        return diffDays % 7;
+});
           const [checkedItems, setCheckedItems] = useState({});
           const [comments, setComments] = useState({});
           const [targetRecovery, setTargetRecovery] = useState(null);
