@@ -943,12 +943,12 @@
         }
 
         function GearView({ temp, setTemp, cond, setCond }) {
-    const [sport, setSport] = useState("Bike");
-    const [wind, setWind] = useState("Low");
-    const [loading, setLoading] = useState(false);
-    const [weatherData, setWeatherData] = useState(null);
-    const [manualOverride, setManualOverride] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(""); // State for user input
+            const [sport, setSport] = useState("Bike");
+            const [wind, setWind] = useState("Low");
+            const [loading, setLoading] = useState(false);
+            const [weatherData, setWeatherData] = useState(null);
+            const [manualOverride, setManualOverride] = useState(false);
+            const [searchQuery, setSearchQuery] = useState(""); // State for user input
 
     // HELPER: Map Numeric Temp to Range Key
     const getRange = (t) => {
@@ -1012,6 +1012,19 @@ const fetchWeather = async (customLoc = null) => {
     setLoading(false);
 };
 
+            // 1. Fetch Boulder on mount (Missing in your snippet)
+    useEffect(() => {
+        fetchWeather();
+    }, []);
+
+    // 2. Handle Search Button (Fixes the Crash)
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            fetchWeather(searchQuery);
+        }
+    };
+            
     // Safe Data Access
     const safeTemp = GEAR_MATRIX[temp] ? temp : "30-40F";
     const safeSport = GEAR_MATRIX[safeTemp][sport] ? sport : "Bike";
