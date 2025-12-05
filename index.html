@@ -603,7 +603,7 @@ const getDailyRecovery = (dayData) => {
 };
 
 // --- NEW COMPONENT: Daily Recovery Block ---
-function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToRecovery }) {
+function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, onOpen }) {
     const isDone = checkedItems[uid];
     
     return (
@@ -622,7 +622,7 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
                 <p className="text-xs text-slate-400 mb-3">{routine.sub}</p>
                 
                 <button 
-                    onClick={() => jumpToRecovery(routine.id)} 
+                    onClick={onOpen} 
                     className="w-full py-2 bg-slate-900 hover:bg-indigo-900/50 text-indigo-300 text-xs font-bold rounded border border-slate-700 hover:border-indigo-500/50 transition-all flex items-center justify-center gap-2"
                 >
                     <PlayCircle size={14}/> Start Routine ({routine.time})
@@ -631,19 +631,23 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
         </div>
     );
 }
-        function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal, openFuelModal }) {
+   function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal, openFuelModal }) {
     
-    // State for the modal
+    // State for the Post-Workout Log Modal
     const [activeModal, setActiveModal] = useState(null); 
     const [activeUid, setActiveUid] = useState(null);
+
+    // NEW: State for the Recovery Modal
+    const [recModalOpen, setRecModalOpen] = useState(false);
 
     const currentDate = getWorkoutDate(week, day);
     const dateString = formatDate(currentDate);
 
-    // Calculate Daily Recovery based on today's load
+    // Calculate Daily Recovery
     const dailyRec = getDailyRecovery(dayData);
-    const recUid = `w${week}d${day}rec`; // Unique ID for recovery checkmark
+    const recUid = `w${week}d${day}rec`; 
 
+    // Workout Check Handler
     const handleCheckClick = (uid, workout) => {
         if (checkedItems[uid]) {
             toggleCheck(uid); 
@@ -653,6 +657,7 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
         }
     };
 
+    // Log Save Handler
     const handleSaveLog = (logData) => {
         if (logData.notes) saveComment(activeUid, logData.notes);
         const finalNote = `RPE: ${logData.rpe}/10 | Time: ${logData.dur} \n${logData.notes}`;
@@ -665,6 +670,7 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
     return (
     <div className="animate-in fade-in duration-500">
         
+        {/* Workout Log Modal */}
         <PostWorkoutModal 
             isOpen={!!activeModal} 
             data={activeModal || {}} 
@@ -672,113 +678,101 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
             onSave={handleSaveLog} 
         />
 
+        {/* NEW: Recovery Routine Modal */}
+        <RecoveryModal 
+            isOpen={recModalOpen}
+            onClose={() => setRecModalOpen(false)}
+            routine={dailyRec}
+            uid={recUid}
+            isCompleted={checkedItems[recUid]}
+            toggleCheck={toggleCheck}
+        />
+
         <div className="flex items-end justify-between mb-6">
-        <div>
-            <div className="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded-sm inline-block font-bold uppercase mb-2">
-                Week {week} • {weekData.title}
+            <div>
+                <div className="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded-sm inline-block font-bold uppercase mb-2">
+                    Week {week} • {weekData.title}
+                </div>
+                <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus}</h2>
+                <div className="text-sm text-slate-400 mt-1 font-mono">{dateString}</div>
             </div>
-            <h2 className="text-3xl font-black text-white italic tracking-tight">{weekData.focus}</h2>
-            <div className="text-sm text-slate-400 mt-1 font-mono">{dateString}</div>
-        </div>
         </div>
 
         <div className="flex overflow-x-auto gap-1 pb-4 no-scrollbar mb-4">
-        {Object.keys(WEEKS).map((w) => (
-            <button key={w} onClick={() => { setWeek(Number(w)); setDay(0); }} className={`flex-shrink-0 w-10 h-10 rounded-sm text-xs font-bold transition-all border ${week === Number(w) ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
-            W{w}
-            </button>
-        ))}
-        </div>
-
-        <div className="grid grid-cols-7 gap-1 mb-8">
-        {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((d, i) => (
-            <button key={i} onClick={() => setDay(i)} className={`h-10 rounded-sm text-[10px] font-bold transition-all border ${day === i ? 'bg-slate-200 border-white text-slate-900' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>
-            {d}
-            </button>
-        ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Daily Objectives</h3>
-            {dayData.workouts.map((workout, idx) => (
-            <WorkoutCard 
-                key={idx} 
-                data={workout} 
-                uid={`w${week}d${day}w${idx}`}
-                checkedItems={checkedItems}
-                toggleCheck={() => handleCheckClick(`w${week}d${day}w${idx}`, workout)}
-                toggleItem={toggleCheck}
-                comments={comments}
-                saveComment={saveComment}
-                openFuelModal={openFuelModal}
-                // Note: 'rec' and 'jumpToRecovery' removed from here, moved to sidebar
-            />
+            {Object.keys(WEEKS).map((w) => (
+                <button key={w} onClick={() => { setWeek(Number(w)); setDay(0); }} className={`flex-shrink-0 w-10 h-10 rounded-sm text-xs font-bold transition-all border ${week === Number(w) ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>W{w}</button>
             ))}
         </div>
 
-        {/* SIDEBAR */}
-        <div className="space-y-4">
-            
-            {/* 1. DAILY RECOVERY (New Position) */}
-            <DailyRecoveryCard 
-                routine={dailyRec}
-                uid={recUid}
-                checkedItems={checkedItems}
-                toggleCheck={toggleCheck}
-                jumpToRecovery={jumpToRecovery}
-            />
-
-            {/* 2. DAILY STACK */}
-            <div className="bg-slate-800 rounded-md p-4 border border-slate-700">
-                <div className="flex items-center justify-between mb-4">
-                <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2">
-                    <Zap size={12} className="text-yellow-500"/> Daily Stack
-                </div>
-                </div>
-                <div className="space-y-2">
-                {dayData.stack && dayData.stack.map((item, i) => {
-                    const uid = `w${week}d${day}s${i}`;
-                    return (
-                    <div key={i} className="flex items-center justify-between bg-slate-900/50 p-2 rounded-sm border border-slate-700/50 hover:bg-slate-900 transition-colors cursor-pointer group" onClick={() => toggleCheck(uid)}>
-                        <div className="flex items-center gap-2">
-                        <button className={checkedItems[uid] ? 'text-green-500' : 'text-slate-600 hover:text-slate-400'}>
-                            {checkedItems[uid] ? <CheckSquare size={16}/> : <Square size={16}/>}
-                        </button>
-                        <span className={`text-xs font-bold ${checkedItems[uid] ? 'text-slate-500 line-through' : 'text-slate-300 group-hover:text-white'}`}>
-                            {item}
-                        </span>
-                        </div>
-                        <div onClick={(e) => { e.stopPropagation(); openSuppModal(item); }}>
-                        <Info size={12} className="text-slate-600 group-hover:text-blue-400 cursor-pointer"/>
-                        </div>
-                    </div>
-                    )
-                })}
-                </div>
-            </div>
-
-            {/* 3. FUELING */}
-            {dayData.workouts[0] && (
-            <div className="bg-slate-800 rounded-md p-4 border border-slate-700 relative overflow-hidden group">
-                <div className={`absolute top-0 right-0 p-1.5 rounded-bl-lg ${
-                    dayData.workouts[0].fl === 'High' ? 'bg-green-500 text-black' : 
-                    dayData.workouts[0].fl === 'Low' ? 'bg-red-500 text-white' : 
-                    'bg-yellow-500 text-black'
-                }`}>
-                    <Flame size={14} />
-                </div>
-                <div className="text-[10px] text-slate-500 font-bold uppercase mb-2">Fueling Strategy</div>
-                <div className="text-xl font-bold text-white mb-1">{dayData.workouts[0].fl} Flux</div>
-                <p className="text-[10px] text-slate-400 leading-relaxed mb-3">
-                    {FLUX_DATA[dayData.workouts[0].fl]?.desc || "Standard Protocol"}
-                </p>
-                <button onClick={jumpToFuel} className="w-full py-2 rounded-sm bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition-colors">
-                    View Menu
-                </button>
-            </div>
-            )}
+        <div className="grid grid-cols-7 gap-1 mb-8">
+            {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((d, i) => (
+                <button key={i} onClick={() => setDay(i)} className={`h-10 rounded-sm text-[10px] font-bold transition-all border ${day === i ? 'bg-slate-200 border-white text-slate-900' : 'bg-slate-900 border-slate-800 text-slate-500 hover:bg-slate-800'}`}>{d}</button>
+            ))}
         </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Daily Objectives</h3>
+                {dayData.workouts.map((workout, idx) => (
+                <WorkoutCard 
+                    key={idx} 
+                    data={workout} 
+                    uid={`w${week}d${day}w${idx}`}
+                    checkedItems={checkedItems}
+                    toggleCheck={() => handleCheckClick(`w${week}d${day}w${idx}`, workout)}
+                    toggleItem={toggleCheck}
+                    comments={comments}
+                    saveComment={saveComment}
+                    openFuelModal={openFuelModal}
+                />
+                ))}
+            </div>
+
+            {/* SIDEBAR */}
+            <div className="space-y-4">
+                
+                {/* 1. DAILY RECOVERY */}
+                <DailyRecoveryCard 
+                    routine={dailyRec}
+                    uid={recUid}
+                    checkedItems={checkedItems}
+                    toggleCheck={toggleCheck}
+                    // CHANGED: Open the modal instead of jumping pages
+                    onOpen={() => setRecModalOpen(true)}
+                />
+
+                {/* 2. DAILY STACK */}
+                <div className="bg-slate-800 rounded-md p-4 border border-slate-700">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2"><Zap size={12} className="text-yellow-500"/> Daily Stack</div>
+                    </div>
+                    <div className="space-y-2">
+                    {dayData.stack && dayData.stack.map((item, i) => {
+                        const uid = `w${week}d${day}s${i}`;
+                        return (
+                        <div key={i} className="flex items-center justify-between bg-slate-900/50 p-2 rounded-sm border border-slate-700/50 hover:bg-slate-900 transition-colors cursor-pointer group" onClick={() => toggleCheck(uid)}>
+                            <div className="flex items-center gap-2">
+                                <button className={checkedItems[uid] ? 'text-green-500' : 'text-slate-600 hover:text-slate-400'}>{checkedItems[uid] ? <CheckSquare size={16}/> : <Square size={16}/>}</button>
+                                <span className={`text-xs font-bold ${checkedItems[uid] ? 'text-slate-500 line-through' : 'text-slate-300 group-hover:text-white'}`}>{item}</span>
+                            </div>
+                            <div onClick={(e) => { e.stopPropagation(); openSuppModal(item); }}><Info size={12} className="text-slate-600 group-hover:text-blue-400 cursor-pointer"/></div>
+                        </div>
+                        )
+                    })}
+                    </div>
+                </div>
+
+                {/* 3. FUELING */}
+                {dayData.workouts[0] && (
+                <div className="bg-slate-800 rounded-md p-4 border border-slate-700 relative overflow-hidden group">
+                    <div className={`absolute top-0 right-0 p-1.5 rounded-bl-lg ${dayData.workouts[0].fl === 'High' ? 'bg-green-500 text-black' : dayData.workouts[0].fl === 'Low' ? 'bg-red-500 text-white' : 'bg-yellow-500 text-black'}`}><Flame size={14} /></div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase mb-2">Fueling Strategy</div>
+                    <div className="text-xl font-bold text-white mb-1">{dayData.workouts[0].fl} Flux</div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed mb-3">{FLUX_DATA[dayData.workouts[0].fl]?.desc || "Standard Protocol"}</p>
+                    <button onClick={jumpToFuel} className="w-full py-2 rounded-sm bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition-colors">View Menu</button>
+                </div>
+                )}
+            </div>
         </div>
     </div>
     );
@@ -1232,6 +1226,76 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToReco
     );
 }
 
+        const RecoveryModal = ({ isOpen, onClose, routine, uid, isCompleted, toggleCheck }) => {
+    if (!isOpen || !routine) return null;
+    
+    // Track which step is expanded to show the GIF
+    const [expandedStep, setExpandedStep] = useState(null);
+
+    const handleComplete = () => {
+        if (!isCompleted) toggleCheck(uid); // Only toggle if not already done
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
+            <div className="bg-slate-900 border border-slate-700 rounded-lg max-w-md w-full p-6 shadow-2xl relative flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 className="text-xl font-bold text-white">{routine.title}</h3>
+                        <p className="text-indigo-400 text-xs font-bold uppercase tracking-wider">{routine.sub} • {routine.time}</p>
+                    </div>
+                    <button onClick={onClose} className="text-slate-500 hover:text-white"><X size={24}/></button>
+                </div>
+
+                {/* Steps List (Scrollable) */}
+                <div className="flex-1 overflow-y-auto mb-6 pr-2 space-y-3">
+                    {routine.steps.map((step, i) => (
+                        <div key={i} className="bg-slate-800/50 rounded border border-slate-700/50 p-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-700 text-slate-300 text-xs font-mono flex items-center justify-center">
+                                        {i + 1}
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-bold text-slate-200">{step.name}</div>
+                                        <div className="text-xs text-slate-500 font-mono">{step.time}</div>
+                                    </div>
+                                </div>
+                                {step.gif && (
+                                    <button 
+                                        onClick={() => setExpandedStep(expandedStep === i ? null : i)}
+                                        className={`p-2 rounded-full transition-colors ${expandedStep === i ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-400 hover:text-white'}`}
+                                    >
+                                        <PlayCircle size={16} />
+                                    </button>
+                                )}
+                            </div>
+                            
+                            {/* Inline GIF Expansion */}
+                            {expandedStep === i && step.gif && (
+                                <div className="mt-3 rounded overflow-hidden aspect-video bg-black">
+                                    <img src={step.gif} alt={step.name} className="w-full h-full object-contain" />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Footer Action */}
+                <button 
+                    onClick={handleComplete}
+                    className={`w-full py-3 font-bold rounded flex items-center justify-center gap-2 transition-all ${isCompleted ? 'bg-green-600 text-white' : 'bg-indigo-600 hover:bg-indigo-500 text-white'}`}
+                >
+                    {isCompleted ? <CheckSquare size={18} /> : <Square size={18} />}
+                    {isCompleted ? "ROUTINE COMPLETED" : "MARK COMPLETE"}
+                </button>
+            </div>
+        </div>
+    );
+};
         function GearRow({ icon: Icon, label, val, color }) {
           const colorClasses = {
               'blue': 'bg-blue-500/20 text-blue-400',
