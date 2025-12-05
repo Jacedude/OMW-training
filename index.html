@@ -1389,6 +1389,27 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, onOpen }) 
             </div>
           );
         }
+            const GifModal = ({ isOpen, onClose, title, gifUrl }) => {
+    if (!isOpen || !gifUrl) return null;
+
+    return (
+        <div className="fixed inset-0 z-[250] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
+            <div className="bg-transparent max-w-lg w-full relative flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                <div className="bg-slate-900 border border-slate-700 p-2 rounded-lg shadow-2xl w-full aspect-video flex items-center justify-center overflow-hidden">
+                    <img 
+                        src={gifUrl} 
+                        alt={title} 
+                        className="w-full h-full object-contain rounded"
+                    />
+                </div>
+                <h3 className="text-white font-bold mt-4 text-lg">{title}</h3>
+                <button onClick={onClose} className="mt-8 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors">
+                    <X size={24} />
+                </button>
+            </div>
+        </div>
+    );
+};
 const PostWorkoutModal = ({ isOpen, onClose, onSave, data }) => {
     if (!isOpen) return null;
     
