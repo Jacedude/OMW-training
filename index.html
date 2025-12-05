@@ -590,42 +590,73 @@
             </div>
           );
         }
+// --- NEW HELPER: Determine best recovery based on highest TSS workout ---
+const getDailyRecovery = (dayData) => {
+    if (!dayData.workouts || dayData.workouts.length === 0) {
+        // Default to Routine B (Mobility) on Rest Days
+        return RECOVERY_ROUTINES['B']; 
+    }
+    // Find workout with highest TSS to dictate recovery focus
+    const hardest = [...dayData.workouts].sort((a, b) => b.tss - a.tss)[0];
+    return RECOVERY_ROUTINES[hardest.rec] || RECOVERY_ROUTINES['A'];
+};
 
+// --- NEW COMPONENT: Daily Recovery Block ---
+function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, jumpToRecovery }) {
+    const isDone = checkedItems[uid];
+    
+    return (
+        <div className={`bg-slate-800 rounded-md p-4 border ${isDone ? 'border-green-900/50 bg-green-900/10' : 'border-indigo-500/30'} relative overflow-hidden transition-all`}>
+            <div className="flex justify-between items-start mb-2">
+                <div className="text-[10px] text-indigo-400 font-bold uppercase flex items-center gap-2">
+                    <Activity size={12}/> Recovery Protocol
+                </div>
+                <button onClick={() => toggleCheck(uid)} className="text-slate-400 hover:text-white">
+                    {isDone ? <CheckSquare size={18} className="text-green-500"/> : <Square size={18}/>}
+                </button>
+            </div>
+            
+            <div className={isDone ? "opacity-50 grayscale transition-all" : ""}>
+                <h3 className="text-lg font-bold text-white leading-tight mb-1">{routine.title}</h3>
+                <p className="text-xs text-slate-400 mb-3">{routine.sub}</p>
+                
+                <button 
+                    onClick={() => jumpToRecovery(routine.id)} 
+                    className="w-full py-2 bg-slate-900 hover:bg-indigo-900/50 text-indigo-300 text-xs font-bold rounded border border-slate-700 hover:border-indigo-500/50 transition-all flex items-center justify-center gap-2"
+                >
+                    <PlayCircle size={14}/> Start Routine ({routine.time})
+                </button>
+            </div>
+        </div>
+    );
+}
         function DashboardView({ week, setWeek, day, setDay, weekData, dayData, checkedItems, toggleCheck, comments, saveComment, jumpToRecovery, jumpToFuel, openSuppModal, openFuelModal }) {
     
-    // NEW: State for the modal
-    const [activeModal, setActiveModal] = useState(null); // stores the workout data object
-    const [activeUid, setActiveUid] = useState(null);     // stores the ID being edited
+    // State for the modal
+    const [activeModal, setActiveModal] = useState(null); 
+    const [activeUid, setActiveUid] = useState(null);
 
     const currentDate = getWorkoutDate(week, day);
     const dateString = formatDate(currentDate);
 
-    // NEW: Handle the click
+    // Calculate Daily Recovery based on today's load
+    const dailyRec = getDailyRecovery(dayData);
+    const recUid = `w${week}d${day}rec`; // Unique ID for recovery checkmark
+
     const handleCheckClick = (uid, workout) => {
         if (checkedItems[uid]) {
-            // If already checked, just uncheck it (easy undo)
             toggleCheck(uid); 
         } else {
-            // If unchecked, OPEN THE MODAL
             setActiveUid(uid);
             setActiveModal(workout);
         }
     };
 
-    // NEW: Handle the save
     const handleSaveLog = (logData) => {
-        // 1. Save the note/comment
         if (logData.notes) saveComment(activeUid, logData.notes);
-        
-        // 2. Here you could save RPE/Dur to firebase if you expanded your database schema
-        // For now, we append RPE to the comment so it shows up
         const finalNote = `RPE: ${logData.rpe}/10 | Time: ${logData.dur} \n${logData.notes}`;
         saveComment(activeUid, finalNote);
-
-        // 3. Mark as complete
         toggleCheck(activeUid);
-        
-        // 4. Close
         setActiveModal(null);
         setActiveUid(null);
     };
@@ -633,7 +664,6 @@
     return (
     <div className="animate-in fade-in duration-500">
         
-        {/* NEW: RENDER THE MODAL IF ACTIVE */}
         <PostWorkoutModal 
             isOpen={!!activeModal} 
             data={activeModal || {}} 
@@ -676,20 +706,29 @@
                 data={workout} 
                 uid={`w${week}d${day}w${idx}`}
                 checkedItems={checkedItems}
-                // PASS OUR NEW HANDLER instead of toggleCheck directly
                 toggleCheck={() => handleCheckClick(`w${week}d${day}w${idx}`, workout)}
                 toggleItem={toggleCheck}
                 comments={comments}
                 saveComment={saveComment}
-                rec={RECOVERY_ROUTINES[workout.rec] || RECOVERY_ROUTINES['A']}
-                jumpToRecovery={jumpToRecovery}
                 openFuelModal={openFuelModal}
+                // Note: 'rec' and 'jumpToRecovery' removed from here, moved to sidebar
             />
             ))}
         </div>
 
-        {/* SIDEBAR (Stack & Flux) - Same as before */}
+        {/* SIDEBAR */}
         <div className="space-y-4">
+            
+            {/* 1. DAILY RECOVERY (New Position) */}
+            <DailyRecoveryCard 
+                routine={dailyRec}
+                uid={recUid}
+                checkedItems={checkedItems}
+                toggleCheck={toggleCheck}
+                jumpToRecovery={jumpToRecovery}
+            />
+
+            {/* 2. DAILY STACK */}
             <div className="bg-slate-800 rounded-md p-4 border border-slate-700">
                 <div className="flex items-center justify-between mb-4">
                 <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2">
@@ -718,6 +757,7 @@
                 </div>
             </div>
 
+            {/* 3. FUELING */}
             {dayData.workouts[0] && (
             <div className="bg-slate-800 rounded-md p-4 border border-slate-700 relative overflow-hidden group">
                 <div className={`absolute top-0 right-0 p-1.5 rounded-bl-lg ${
@@ -742,8 +782,7 @@
     </div>
     );
 }
-
-        function WorkoutCard({ data, uid, checkedItems, toggleCheck, toggleItem, comments, saveComment, rec, jumpToRecovery, openFuelModal }) {
+        function WorkoutCard({ data, uid, checkedItems, toggleCheck, toggleItem, comments, saveComment, openFuelModal }) {
     const colors = {
         'Swim': { head: 'bg-blue-600', text: 'text-blue-400', border: 'border-blue-500/30' },
         'Run': { head: 'bg-emerald-600', text: 'text-emerald-400', border: 'border-emerald-500/30' },
@@ -755,7 +794,6 @@
 
     return (
     <div className={`bg-slate-800 rounded-md overflow-hidden border ${colors.border} shadow-sm relative`}>
-        {/* COMPLETED OVERLAY */}
         {isCompleted && <div className="absolute top-0 right-0 p-4 z-10 opacity-10 pointer-events-none"><CheckSquare size={100} /></div>}
 
         <div className={`${colors.head} px-4 py-3 flex justify-between items-center z-20 relative`}>
@@ -778,7 +816,6 @@
             <Dumbbell size={12}/> Goal: {data.goal}
         </div>
         
-        {/* Exercises */}
         <div className={`bg-slate-900/50 p-4 rounded-sm mb-4 border-l-2 border-slate-600 ${isCompleted ? 'opacity-50' : ''}`}>
             {data.ex.map((line, i) => (
                 <div key={i} className="mb-2 last:mb-0 text-sm font-medium text-slate-300 flex items-start gap-2">
@@ -788,7 +825,6 @@
             ))}
         </div>
 
-        {/* RESTORED: Session Stack (Acute) */}
         {data.supps && data.supps.length > 0 && (
             <div className={`mb-4 ${isCompleted ? 'opacity-50' : ''}`}>
                 <div className="text-[10px] text-slate-500 font-bold uppercase mb-2">Session Stack</div>
@@ -810,17 +846,13 @@
             </div>
         )}
 
-        {/* Footer Actions */}
+        {/* Footer Actions - REMOVED RECOVERY BUTTON */}
         <div className="flex gap-2 mb-4">
-            <button onClick={() => openFuelModal(data.fl)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => openFuelModal(data.fl)} className="w-full py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
                 <Flame size={12} className="text-orange-400"/> Fuel: {fuelTarget}
-            </button>
-            <button onClick={() => jumpToRecovery(rec.id)} className="flex-1 py-2 rounded-sm bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition-colors flex items-center justify-center gap-2">
-                <Activity size={12} className="text-blue-400"/> {rec.title}
             </button>
         </div>
 
-        {/* DYNAMIC LOG SECTION */}
         {isCompleted ? (
             <div className="bg-emerald-900/10 border border-emerald-500/20 rounded p-3 mt-4 animate-in fade-in slide-in-from-bottom-2">
                 <div className="text-[10px] text-emerald-500 font-bold uppercase mb-1 flex items-center gap-1">
