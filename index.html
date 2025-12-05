@@ -123,11 +123,56 @@
         };
 
         const RECOVERY_ROUTINES = {
-          'A': { id: 'A', title: "Routine A: The Flush", sub: "Parasympathetic Reset", time: "10m", steps: ["Legs Up Wall (3m)", "Box Breathing (2m)", "Light Calf Roll (2m)", "Child's Pose (2m)", "Hydrate (16oz)"] },
-          'B': { id: 'B', title: "Routine B: The Unlock", sub: "Hip & Spine Mobility", time: "10m", steps: ["T-Spine Ext (2m)", "Couch Stretch (2m/side)", "90/90 Hip Switch (2m)", "Cat/Cow (2m)", "Deep Squat Hold (2m)"] },
-          'C': { id: 'C', title: "Routine C: The Release", sub: "Deep Tissue", time: "10m", steps: ["Gun: Glute Med (2m)", "Gun: Quads (2m)", "Roll IT Band (2m)", "Pigeon Pose (2m)", "Hamstring Floss (2m)"] },
-          'D': { id: 'D', title: "Routine D: The Foundation", sub: "Core Strength", time: "20m", steps: ["Pallof Press (3x10)", "DB Goblet Squat (3x12)", "Dead Bug (3x10)", "Band Clamshells (3x15)", "Plank Saw (3x45s)"] },
-          'E': { id: 'E', title: "Routine E: The Stabilizer", sub: "Ankle/Shoulder", time: "15m", steps: ["Mobo Rock (3x1m)", "DB Scaption (3x10)", "Single Leg RDL (3x10)", "Band Pull-Apart (3x15)", "Mobo Lateral (3x1m)"] }
+          'A': { 
+            id: 'A', title: "Routine A: The Flush", sub: "Parasympathetic Reset", time: "10m", 
+            steps: [
+              { name: "Legs Up Wall", time: "3m", gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmEzM3ZxeW94bnV4em56Z3hqenZxeW94bnV4em56Z3hqenZxeW94biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l41lFj8AFPAVI2huU/giphy.gif" },
+              { name: "Box Breathing", time: "2m", gif: "https://media.giphy.com/media/sA0tCBbpUgA2xBZkNH/giphy.gif" },
+              { name: "Light Calf Roll", time: "2m", gif: "https://media.giphy.com/media/3o6ozpQ7G8MyzJHxdu/giphy.gif" },
+              { name: "Child's Pose", time: "2m", gif: "https://media.giphy.com/media/u5LuNosBUoS9i7TN39/giphy.gif" },
+              { name: "Hydrate", time: "16oz", gif: null }
+            ] 
+          },
+          'B': { 
+            id: 'B', title: "Routine B: The Unlock", sub: "Hip & Spine Mobility", time: "10m", 
+            steps: [
+              { name: "T-Spine Extension", time: "2m", gif: "https://media.giphy.com/media/3o6ozpQ7G8MyzJHxdu/giphy.gif" },
+              { name: "Couch Stretch", time: "2m/side", gif: "https://i.pinimg.com/originals/9d/2e/5e/9d2e5e896562095209d7326260a95079.gif" },
+              { name: "90/90 Hip Switch", time: "2m", gif: "https://media.giphy.com/media/vk3EkIVRsfBuOAJ5G2/giphy.gif" },
+              { name: "Cat/Cow", time: "2m", gif: "https://media.giphy.com/media/823518054401/giphy.gif" },
+              { name: "Deep Squat Hold", time: "2m", gif: "https://media.giphy.com/media/8923367076954029314/giphy.gif" }
+            ] 
+          },
+          'C': { 
+            id: 'C', title: "Routine C: The Release", sub: "Deep Tissue", time: "10m", 
+            steps: [
+              { name: "Gun: Glute Medius", time: "2m", gif: "https://media.giphy.com/media/QCB2i0He6v40rA5lTH/giphy.gif" },
+              { name: "Gun: Quads/VMO", time: "2m", gif: "https://media.giphy.com/media/QCB2i0He6v40rA5lTH/giphy.gif" },
+              { name: "Roll IT Band", time: "2m", gif: "https://media.giphy.com/media/3o6ozpQ7G8MyzJHxdu/giphy.gif" },
+              { name: "Pigeon Pose", time: "2m", gif: "https://media.giphy.com/media/4HuxLWQykxk/giphy.gif" },
+              { name: "Hamstring Floss", time: "2m", gif: "https://media.giphy.com/media/HUHTbzTiNQ1WusRP6c/giphy.gif" }
+            ] 
+          },
+          'D': { 
+            id: 'D', title: "Routine D: The Foundation", sub: "Core Strength", time: "20m", 
+            steps: [
+              { name: "Pallof Press", time: "3x10", gif: "https://media.giphy.com/media/ss-onIwHVGQ/giphy.gif" },
+              { name: "DB Goblet Squat", time: "3x12", gif: "https://media.giphy.com/media/3oKIPvcdnW1xs9m5IA/giphy.gif" },
+              { name: "Dead Bug", time: "3x10", gif: "https://media.giphy.com/media/aIyZ9Ra6pyo5ZOHQsm/giphy.gif" },
+              { name: "Band Clamshells", time: "3x15", gif: "https://media.giphy.com/media/11750010/giphy.gif" },
+              { name: "Plank Saw", time: "3x45s", gif: "https://media.giphy.com/media/ZcteOOkovIh9HaVFjT/giphy.gif" }
+            ] 
+          },
+          'E': { 
+            id: 'E', title: "Routine E: The Stabilizer", sub: "Ankle/Shoulder", time: "15m", 
+            steps: [
+              { name: "Mobo/Wobble Board", time: "3x1m", gif: "https://media.giphy.com/media/FWer4juebZM/giphy.gif" },
+              { name: "DB Scaption", time: "3x10", gif: "https://media.giphy.com/media/365physique/giphy.gif" },
+              { name: "Single Leg RDL", time: "3x10", gif: "https://media.giphy.com/media/EcTa0UPdARs78cqyP8/giphy.gif" },
+              { name: "Band Pull-Apart", time: "3x15", gif: "https://media.giphy.com/media/3366/giphy.gif" },
+              { name: "Mobo Lateral Rock", time: "3x1m", gif: "https://media.giphy.com/media/FWer4juebZM/giphy.gif" }
+            ] 
+          }
         };
 
         const FLUX_DATA = {
