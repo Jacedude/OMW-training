@@ -1183,14 +1183,6 @@ function DailyRecoveryCard({ routine, uid, checkedItems, toggleCheck, onOpen }) 
         }
     };
 
-    // 2. Handle Search Button (Fixes the Crash)
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            fetchWeather(searchQuery);
-        }
-    };
-
     const handleOverride = (setter, val) => {
         setter(val);
         setManualOverride(true);
